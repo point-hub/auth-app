@@ -20,50 +20,39 @@ const toggleRevealPassword = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 items-center justify-center h-screen container mx-auto">
-    <img
-      src="https://assets.pointhub.net/assets/images/logo/primary/logo.png"
-      alt="pointhub-logo"
-      class="max-w-xl h-12"
-    />
-    <component :is="BaseCard" class="max-w-xl">
-      <form @submit.prevent="" class="flex flex-col gap-8">
-        <div class="flex flex-col gap-4">
-          <component
-            :is="BaseInput"
-            v-model="form.username"
-            label="Username / Email"
-            layout="vertical"
-          />
-          <component
-            :is="BaseInput"
-            :type="passwordType"
-            v-model="form.password"
-            label="Password"
-            layout="vertical"
-          >
-            <template #suffix>
-              <BaseButton @click="toggleRevealPassword" variant="text" color="secondary">
-                <BaseIcon icon="i-far-eye" />
-              </BaseButton>
-            </template>
-          </component>
-          <div class="flex justify-between">
-            <component :is="BaseCheckbox" v-model="form.checkbox" text="Remember Me" />
-            <a href="#" class="">Forgot Password</a>
-          </div>
+  <component :is="BaseCard" class="max-w-xl">
+    <form @submit.prevent="" class="flex flex-col gap-8">
+      <div class="flex flex-col gap-4">
+        <component
+          :is="BaseInput"
+          v-model="form.username"
+          label="Username / Email"
+          layout="vertical"
+        />
+        <component
+          :is="BaseInput"
+          :type="passwordType"
+          v-model="form.password"
+          label="Password"
+          layout="vertical"
+        >
+          <template #suffix>
+            <BaseButton @click="toggleRevealPassword" variant="text" color="secondary">
+              <BaseIcon icon="i-far-eye" />
+            </BaseButton>
+          </template>
+        </component>
+        <div class="flex justify-between">
+          <component :is="BaseCheckbox" v-model="form.checkbox" text="Remember Me" />
+          <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
         </div>
-        <component :is="BaseButton" variant="fill">Sign Up</component>
-      </form>
-      <div class="mt-4">
-        Don't have an account ? <router-link to="/auth/signup">Sign Up</router-link>
       </div>
-    </component>
-    <div class="flex gap-4">
-      <a href="#">Privacy</a>
-      <a href="#">Terms</a>
+      <component :is="BaseButton" variant="fill">Sign In</component>
+    </form>
+    <div class="mt-4">
+      Don't have an account ? <router-link to="/auth/signup">Sign Up</router-link>
     </div>
-  </div>
+  </component>
 </template>
 
 <style scoped lang="postcss"></style>

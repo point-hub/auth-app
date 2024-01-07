@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: () => import('../layouts/app.vue'),
+      component: () => import('../layouts/auth.vue'),
       children: [
         {
           path: '',
@@ -15,6 +15,7 @@ const router = createRouter({
     },
     {
       path: '/auth',
+      component: () => import('../layouts/auth.vue'),
       children: [
         {
           path: 'signin',

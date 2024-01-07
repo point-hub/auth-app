@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@point-hub/express-utils": "^0.1.4",
-    "@point-hub/papp": "0.0.16",
+    "@point-hub/papp": "0.0.18",
     "axios": "^1.6.4",
     "pinia": "^2.1.7",
-    "vue": "^3.4.4",
+    "vue": "^3.4.5",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
@@ -47,7 +47,7 @@
     "typescript": "~5.3.3",
     "unocss": "^0.58.3",
     "vite": "^5.0.10",
-    "vitest": "^1.1.1",
+    "vitest": "^1.1.2",
     "vue-tsc": "^1.8.27"
   }
 }

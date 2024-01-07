@@ -1,7 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>Page 1</div>
+  <div class="flex gap-4">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </div>
 </template>
 
 <style scoped lang="postcss"></style>

@@ -58,7 +58,7 @@ const toggleRevealPassword = () => {
           <p>Accept <a href="#">Privacy</a> & <a href="#">Terms</a></p>
         </div>
       </div>
-      <component :is="BaseButton" variant="fill">Sign Up</component>
+      <component :is="BaseButton" variant="fill" color="primary">Sign Up</component>
     </form>
     <div class="mt-4">
       Already have an account ? <router-link to="/auth/signin">Sign In</router-link>

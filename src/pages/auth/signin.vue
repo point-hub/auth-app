@@ -17,11 +17,13 @@ const toggleRevealPassword = () => {
     passwordType.value = 'password'
   }
 }
+
+const onSubmit = () => {}
 </script>
 
 <template>
   <component :is="BaseCard" class="max-w-xl">
-    <form @submit.prevent="" class="flex flex-col gap-8">
+    <form @submit.prevent="onSubmit" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
         <component
           :is="BaseInput"
@@ -47,7 +49,7 @@ const toggleRevealPassword = () => {
           <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
         </div>
       </div>
-      <component :is="BaseButton" variant="fill">Sign In</component>
+      <component :is="BaseButton" variant="fill" color="primary">Sign In</component>
     </form>
     <div class="mt-4">
       Don't have an account ? <router-link to="/auth/signup">Sign Up</router-link>

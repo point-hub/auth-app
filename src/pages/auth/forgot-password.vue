@@ -27,7 +27,7 @@ const toggleRevealPassword = () => {
       <div class="flex flex-col gap-4">
         <component :is="BaseInput" v-model="form.email" label="Email" layout="vertical" />
       </div>
-      <component :is="BaseButton" variant="fill">Request Reset Password</component>
+      <component :is="BaseButton" variant="fill" color="primary">Request Reset Password</component>
     </form>
     <div class="mt-4">Remember Password ? <router-link to="/auth/signin">Sign In</router-link></div>
   </component>

@@ -14,7 +14,7 @@ const { open, close } = useWebsocketStore()
 // handshake to websockets
 onMounted(() => {
   loadDarkMode()
-  // open(websocketConfig.url)
+  open(websocketConfig.url)
 })
 // close websocket when leave application
 onBeforeUnmount(() => {

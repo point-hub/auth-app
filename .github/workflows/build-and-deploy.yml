@@ -15,7 +15,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,11 +54,14 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
+            "VITE_API_TIMEOUT=${{ secrets.VITE_API_TIMEOUT }}"
+            "VITE_WEBSOCKET_URL=${{ secrets.VITE_WEBSOCKET_URL }}"
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
     steps:
       - name: Checkout master
         uses: actions/checkout@main

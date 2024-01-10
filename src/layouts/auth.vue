@@ -13,6 +13,6 @@ import AuthHeader from '../components/auth-header.vue'
 
 <style scoped lang="postcss">
 .auth-layout {
-  @apply flex flex-col gap-8 items-center justify-center h-screen container mx-auto
+  @apply flex flex-col gap-8 items-center justify-center container mx-auto py-16;
 }
 </style>

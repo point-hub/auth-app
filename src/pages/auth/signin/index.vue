@@ -2,6 +2,10 @@
 import { BaseButton, BaseCard, BaseCheckbox, BaseInput } from '@point-hub/papp'
 import { ref } from 'vue'
 
+import { useToastStore } from '@/stores/toast-store'
+
+const { toastRef } = useToastStore()
+
 const form = ref({
   username: '',
   password: '',
@@ -18,7 +22,10 @@ const toggleRevealPassword = () => {
   }
 }
 
-const onSubmit = () => {}
+const onSubmit = () => {
+  console.log('submit')
+  toastRef.toast('Close after 3 second', { color: 'warning' })
+}
 </script>
 
 <template>
@@ -27,12 +34,14 @@ const onSubmit = () => {}
       <div class="flex flex-col gap-4">
         <component
           :is="BaseInput"
+          required
           v-model="form.username"
           label="Username / Email"
           layout="vertical"
         />
         <component
           :is="BaseInput"
+          required
           :type="passwordType"
           v-model="form.password"
           label="Password"
@@ -49,7 +58,7 @@ const onSubmit = () => {}
           <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
         </div>
       </div>
-      <component :is="BaseButton" variant="fill" color="primary">Sign In</component>
+      <component :is="BaseButton" type="submit" variant="fill" color="primary">Sign In</component>
     </form>
     <div class="mt-4">
       Don't have an account ? <router-link to="/auth/signup">Sign Up</router-link>

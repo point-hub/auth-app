@@ -1,9 +1,12 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex gap-4">
-    <a href="https://pointhub.net/privacy">Privacy</a>
-    <a href="https://pointhub.net/terms">Terms</a>
+  <div class="w-full max-w-xl flex justify-between gap-4">
+    Pointhub ©2023-2024
+    <div class="flex gap-4">
+      <a href="https://pointhub.net/privacy">Privacy</a>
+      <a href="https://pointhub.net/terms">Terms</a>
+    </div>
   </div>
 </template>
 

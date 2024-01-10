@@ -19,19 +19,19 @@ const router = createRouter({
       children: [
         {
           path: 'signin',
-          component: () => import('@/pages/auth/signin.vue')
+          component: () => import('@/pages/auth/signin/index.vue')
         },
         {
           path: 'signup',
-          component: () => import('@/pages/auth/signup.vue')
+          component: () => import('@/pages/auth/signup/index.vue')
         },
         {
           path: 'forgot-password',
-          component: () => import('@/pages/auth/forgot-password.vue')
+          component: () => import('@/pages/auth/forgot-password/index.vue')
         },
         {
           path: 'reset-password',
-          component: () => import('@/pages/auth/reset-password.vue')
+          component: () => import('@/pages/auth/reset-password/index.vue')
         }
       ]
     }

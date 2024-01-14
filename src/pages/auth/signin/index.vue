@@ -24,7 +24,12 @@ const toggleRevealPassword = () => {
 
 const onSubmit = () => {
   console.log('submit')
-  toastRef.toast('Close after 3 second', { color: 'warning' })
+  toastRef.toast(
+    'Administrator: Please update your website terms and privacy policy https://developers.google.com/identity/protocols',
+    {
+      color: 'danger'
+    }
+  )
 }
 </script>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BaseButton, BaseCard, BaseCheckbox, BaseInput } from '@point-hub/papp'
+import { AxiosError } from 'axios'
 
 import axios from '@/axios'
 import { useToastStore } from '@/stores/toast-store'
@@ -10,6 +11,25 @@ import { usePassword } from './password'
 const { toastRef } = useToastStore()
 const form = useForm()
 const password = usePassword()
+
+const onEmailChange = async () => {
+  try {
+    form.data.value.errors.email = []
+    const response = await axios.post('/v1/auth/existing-email', form.data.value)
+    if (response.data.exists === true) {
+      form.data.value.errors.email = ['Email is exists']
+    }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errors = error?.response?.data?.errors
+      if (errors) {
+        for (const key in errors) {
+          form.data.value.errors[key] = errors[key]
+        }
+      }
+    }
+  }
+}
 
 const onSubmit = async () => {
   if (form.data.value.errors.password.length !== 0) {
@@ -59,6 +79,7 @@ const onSubmit = async () => {
           layout="vertical"
           v-model="form.data.value.email"
           :errors="form.data.value.errors.email"
+          @change="onEmailChange"
         />
         <component
           :is="BaseInput"

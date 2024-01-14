@@ -24,11 +24,11 @@ export function useForm() {
   const emailValidation = useEmailValidation()
 
   const data = ref<IForm>({
-    name: 'a',
-    email: 's',
+    name: '',
+    email: '',
     username: '',
-    password: '123!@#qweQWE',
-    confirmPassword: '123!@#qweQWE',
+    password: '',
+    confirmPassword: '',
     acceptTerms: true,
     errors: {
       name: [],
@@ -59,6 +59,7 @@ export function useForm() {
   }
 
   const passwordValidation = () => {
+    data.value.errors.password = []
     confirmPasswordValidation()
     if (data.value.password.length === 0) {
       return

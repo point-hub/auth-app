@@ -12,14 +12,16 @@ instance.defaults.headers.common['Authorization'] = `Bearer ${cookie.get('access
 
 instance.interceptors.request.use(
   (config) => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       console.log('Request: ', config.url)
       console.log('Request: ', config)
     }
     return config
   },
   function (error) {
-    console.log('Response Error: ', error.response)
+    if (import.meta.env.DEV) {
+      console.log('Response Error: ', error.response)
+    }
     return Promise.reject(error.response)
   }
 )

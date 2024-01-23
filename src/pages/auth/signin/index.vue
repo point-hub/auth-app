@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BaseButton, BaseCard, BaseCheckbox, BaseInput } from '@point-hub/papp'
+import { BaseButton, BaseCard, BaseCheckbox, BaseDivider, BaseInput } from '@point-hub/papp'
 import { ref } from 'vue'
 
 import { useToastStore } from '@/stores/toast-store'
@@ -25,7 +25,7 @@ const toggleRevealPassword = () => {
 const onSubmit = () => {
   console.log('submit')
   toastRef.toast(
-    'Administrator: Please update your website terms and privacy policy https://developers.google.com/identity/protocols',
+    'Administrator: Your request has been submitted. Allow up to 48 hours for an update',
     {
       color: 'danger'
     }
@@ -63,9 +63,30 @@ const onSubmit = () => {
           <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
         </div>
       </div>
-      <component :is="BaseButton" type="submit" variant="fill" color="primary">Sign In</component>
+      <div>
+        <component :is="BaseButton" type="submit" variant="fill" is-block color="primary">
+          Sign In
+        </component>
+        <component :is="BaseDivider" orientation="vertical" text="or continue with" />
+        <div class="flex gap-2">
+          <component :is="BaseButton" type="button" variant="outline" class="shadow">
+            <img
+              src="@/assets/images/continue-with/google.svg"
+              alt="Continue with Google"
+              class="h-6"
+            />
+          </component>
+          <component :is="BaseButton" type="button" variant="outline" class="shadow">
+            <img
+              src="@/assets/images/continue-with/github.svg"
+              alt="Continue with Github"
+              class="h-6"
+            />
+          </component>
+        </div>
+      </div>
     </form>
-    <div class="mt-4">
+    <div class="mt-8">
       Don't have an account ? <router-link to="/auth/signup">Sign Up</router-link>
     </div>
   </component>

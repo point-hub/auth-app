@@ -1,35 +1,19 @@
 <script setup lang="ts">
 import { BaseButton, BaseCard, BaseCheckbox, BaseDivider, BaseInput } from '@point-hub/papp'
-import { ref } from 'vue'
+import { AxiosError } from 'axios'
+import { reactive } from 'vue'
 
-import { useToastStore } from '@/stores/toast-store'
+import { useForm } from './form'
+import { usePassword } from './password'
+import { useSigninApi } from './signin.api'
 
-const { toastRef } = useToastStore()
+const form = reactive(useForm())
+const password = reactive(usePassword())
+const signinApi = useSigninApi()
 
-const form = ref({
-  username: '',
-  password: '',
-  checkbox: false
-})
-
-const passwordType = ref<'text' | 'password'>('password')
-
-const toggleRevealPassword = () => {
-  if (passwordType.value === 'password') {
-    passwordType.value = 'text'
-  } else {
-    passwordType.value = 'password'
-  }
-}
-
-const onSubmit = () => {
-  console.log('submit')
-  toastRef.toast(
-    'Administrator: Your request has been submitted. Allow up to 48 hours for an update',
-    {
-      color: 'danger'
-    }
-  )
+const onSubmit = async () => {
+  const response = await signinApi.send(form.data, form.errors)
+  console.log(response)
 }
 </script>
 
@@ -40,26 +24,28 @@ const onSubmit = () => {
         <component
           :is="BaseInput"
           required
-          v-model="form.username"
+          v-model="form.data.username"
+          :errors="form.errors.username"
           label="Username / Email"
           layout="vertical"
         />
         <component
           :is="BaseInput"
           required
-          :type="passwordType"
-          v-model="form.password"
+          :type="password.type"
+          v-model="form.data.password"
+          :errors="form.errors.password"
           label="Password"
           layout="vertical"
         >
           <template #suffix>
-            <BaseButton @click="toggleRevealPassword" variant="text" color="secondary">
+            <BaseButton @click="password.toggle" variant="text" color="secondary">
               <BaseIcon icon="i-far-eye" />
             </BaseButton>
           </template>
         </component>
         <div class="flex justify-between">
-          <component :is="BaseCheckbox" v-model="form.checkbox" text="Remember Me" />
+          <component :is="BaseCheckbox" v-model="form.data.rememberMe" text="Remember Me" />
           <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
         </div>
       </div>

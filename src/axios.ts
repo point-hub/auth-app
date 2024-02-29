@@ -9,6 +9,7 @@ const instance = axios.create({
 })
 
 instance.defaults.headers.common['Authorization'] = `Bearer ${cookie.get('accessToken')}`
+instance.defaults.withCredentials = true
 
 instance.interceptors.request.use(
   (config) => {

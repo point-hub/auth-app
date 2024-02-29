@@ -1,33 +1,51 @@
 <script setup lang="ts">
-import { BaseButton, BaseCard, BaseCheckbox, BaseInput } from '@point-hub/papp'
-import { ref } from 'vue'
+import { BaseButton, BaseCard, BaseInput } from '@point-hub/papp'
+import { AxiosError } from 'axios'
+import { reactive } from 'vue'
 
-const form = ref({
-  email: '',
-  username: '',
-  password: '',
-  confirmPassword: '',
-  accept: false
-})
+import axios from '@/axios'
 
-const passwordType = ref<'text' | 'password'>('password')
+import { useForm } from './form'
 
-const toggleRevealPassword = () => {
-  if (passwordType.value === 'password') {
-    passwordType.value = 'text'
-  } else {
-    passwordType.value = 'password'
+const form = reactive(useForm())
+
+const onSubmit = async () => {
+  try {
+    console.log(form.data.email)
+    const response = await axios.post('/v1/auth/request-password', {
+      email: form.data.email
+    })
+    console.log('submit', response.data)
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errors = error?.response?.data?.errors
+      if (errors) {
+        for (const key in errors) {
+          form.errors[key] = errors[key]
+        }
+      } else {
+        // toastRef.toast(error.message, { color: 'danger' })
+      }
+    }
   }
 }
 </script>
 
 <template>
   <component :is="BaseCard" class="max-w-xl">
-    <form @submit.prevent="" class="flex flex-col gap-8">
+    <form @submit.prevent="onSubmit" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
-        <component :is="BaseInput" v-model="form.email" label="Email" layout="vertical" />
+        <component
+          :is="BaseInput"
+          v-model="form.data.email"
+          :errors="form.errors.email"
+          label="Email"
+          layout="vertical"
+        />
       </div>
-      <component :is="BaseButton" variant="fill" color="primary">Request Reset Password</component>
+      <component :is="BaseButton" type="submit" variant="fill" color="primary">
+        Request Reset Password
+      </component>
     </form>
     <div class="mt-4">Remember Password ? <router-link to="/auth/signin">Sign In</router-link></div>
   </component>

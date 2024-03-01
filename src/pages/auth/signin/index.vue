@@ -53,7 +53,7 @@ const onSubmit = async () => {
         <component :is="BaseButton" type="submit" variant="fill" is-block color="primary">
           Sign In
         </component>
-        <component :is="BaseDivider" orientation="vertical" text="or continue with" />
+        <!-- <component :is="BaseDivider" orientation="vertical" text="or continue with" />
         <div class="flex gap-2">
           <component :is="BaseButton" type="button" variant="outline" class="shadow">
             <img
@@ -69,7 +69,7 @@ const onSubmit = async () => {
               class="h-6"
             />
           </component>
-        </div>
+        </div> -->
       </div>
     </form>
     <div class="mt-8">

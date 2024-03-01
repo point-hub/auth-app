@@ -26,6 +26,10 @@ const router = createRouter({
           component: () => import('@/pages/auth/signup/index.vue')
         },
         {
+          path: 'verify-email',
+          component: () => import('@/pages/auth/verify-email/index.vue')
+        },
+        {
           path: 'forgot-password',
           component: () => import('@/pages/auth/forgot-password/index.vue')
         },

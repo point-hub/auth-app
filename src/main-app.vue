@@ -3,7 +3,6 @@ import { BaseToast, useDarkMode, useScreenSize, useWebsocketStore } from '@point
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterView } from 'vue-router'
 
-import websocketConfig from '@/config/websocket'
 import { useToastStore } from '@/stores/toast-store'
 
 const { loadDarkMode } = useDarkMode()
@@ -20,8 +19,6 @@ const { open, close } = useWebsocketStore()
 onMounted(() => {
   // set default darkmode
   loadDarkMode()
-  // open websocket connection
-  open(websocketConfig.url)
 })
 onBeforeUnmount(() => {
   // close websocket connection

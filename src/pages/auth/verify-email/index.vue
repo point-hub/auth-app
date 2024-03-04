@@ -13,15 +13,14 @@ const { toastRef } = useToastStore()
 const route = useRoute()
 
 const form = reactive(useForm())
-form.data.code = route.query.code
+form.data.code = route.query.code?.toString() ?? ''
 
 const onSubmit = async () => {
   try {
-    console.log(form.data.code)
-    const response = await axios.post('/v1/auth/verify-email', {
+    await axios.post('/v1/auth/verify-email', {
       code: form.data.code
     })
-    console.log('submit', response.data)
+    toastRef.toast('email verification success', { color: 'success' })
   } catch (error) {
     if (error instanceof AxiosError) {
       const errors = error?.response?.data?.errors

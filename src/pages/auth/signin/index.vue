@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { BaseButton, BaseCard, BaseCheckbox, BaseDivider, BaseInput } from '@point-hub/papp'
-import { AxiosError } from 'axios'
+import { BaseButton, BaseCard, BaseCheckbox, BaseInput } from '@point-hub/papp'
 import { reactive } from 'vue'
 
 import { useForm } from './form'

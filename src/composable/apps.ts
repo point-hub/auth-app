@@ -9,10 +9,6 @@ export const apps: IApps[] = [
         path: '/app1a/home'
       },
       {
-        name: 'Websocket',
-        path: '/app1a/websocket'
-      },
-      {
         name: 'Nested',
         submenu: [
           { name: 'Page 1', path: '/app1a/nested/page-1' },

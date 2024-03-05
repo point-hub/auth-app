@@ -1,16 +1,18 @@
-name: build-and-deploy-staging
+name: deployment-production
 
 on:
   push:
     branches:
-      - staging
+      - main
+    tags:
+      - 'v*.*.*'
   pull_request:
     branches:
-      - staging
+      - main
 
 jobs:
   build:
-    environment: staging
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -56,7 +58,7 @@ jobs:
             "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
 
   deploy:
-    environment: staging
+    environment: production
     needs: build
     runs-on: ubuntu-latest
     steps:

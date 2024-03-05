@@ -11,6 +11,8 @@ const toastStore = useToastStore()
 const toastRef = ref()
 toastStore.toastRef = toastRef
 
+localStorage.setItem('dark-mode', 'light')
+
 useDarkMode()
 useScreenSize()
 

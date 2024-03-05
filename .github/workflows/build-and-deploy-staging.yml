@@ -58,8 +58,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout master
-        uses: actions/checkout@main
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -70,4 +70,4 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 300 ${{ secrets.KUBERNETES_CLUSTER_ID }}
 
       - name: Restart deployment
-        run: kubectl rollout restart deployment/${{ secrets.KUBERNETES_DEPLOYMENT_NAME }}
+        run: kubectl rollout restart deployment/${{ secrets.STAGING_KUBERNETES_DEPLOYMENT_NAME }}

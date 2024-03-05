@@ -1,4 +1,4 @@
-name: build-and-deploy
+name: build-and-deploy-staging
 
 on:
   push:
@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    environment: staging
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,8 +52,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
-            "VITE_API_TIMEOUT=${{ secrets.VITE_API_TIMEOUT }}"
+            "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}"
+            "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
 
   deploy:
     needs: build

@@ -53,8 +53,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
-            "VITE_API_TIMEOUT=${{ secrets.VITE_API_TIMEOUT }}"
+            "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}"
+            "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
 
   deploy:
     needs: build
@@ -72,4 +72,4 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 300 ${{ secrets.KUBERNETES_CLUSTER_ID }}
 
       - name: Restart deployment
-        run: kubectl rollout restart deployment/${{ secrets.KUBERNETES_DEPLOYMENT_NAME }}
+        run: kubectl rollout restart deployment/${{ vars.KUBERNETES_DEPLOYMENT_NAME }}

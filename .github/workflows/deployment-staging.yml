@@ -1,17 +1,16 @@
-name: build-and-deploy-production
+name: deployment-staging
 
 on:
   push:
     branches:
-      - main
-    tags:
-      - 'v*.*.*'
+      - staging
   pull_request:
     branches:
-      - main
+      - staging
 
 jobs:
   build:
+    environment: staging
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -53,14 +52,14 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}"
-            "VITE_API_TIMEOUT=${{ secrets.VITE_API_TIMEOUT }}"
+            "VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL }}"
+            "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install doctl
@@ -72,4 +71,4 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 300 ${{ secrets.KUBERNETES_CLUSTER_ID }}
 
       - name: Restart deployment
-        run: kubectl rollout restart deployment/${{ secrets.KUBERNETES_DEPLOYMENT_NAME }}
+        run: kubectl rollout restart deployment/${{ secrets.STAGING_KUBERNETES_DEPLOYMENT_NAME }}

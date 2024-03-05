@@ -8,9 +8,6 @@
       <a href="https://pointhub.net/terms">Terms</a>
     </div>
   </div>
-  <div class="w-full max-w-xl flex justify-end gap-4 -mt-8">
-    <span class="text-xs">v.01234</span>
-  </div>
 </template>
 
 <style scoped lang="postcss"></style>

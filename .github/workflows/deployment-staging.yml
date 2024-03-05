@@ -56,6 +56,7 @@ jobs:
             "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
 
   deploy:
+    environment: staging
     needs: build
     runs-on: ubuntu-latest
     steps:

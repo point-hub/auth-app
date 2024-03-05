@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,10 +58,11 @@ jobs:
             "VITE_API_TIMEOUT=${{ vars.VITE_API_TIMEOUT }}"
 
   deploy:
+    environment: production
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install doctl

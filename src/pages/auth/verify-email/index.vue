@@ -29,7 +29,7 @@ const onSubmit = async () => {
           form.errors[key] = errors[key]
         }
       } else {
-        toastRef.toast(error.message, { color: 'danger' })
+        toastRef.toast(error.response?.data?.message ?? error.message, { color: 'danger' })
       }
     }
   }

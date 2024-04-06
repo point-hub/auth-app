@@ -9,19 +9,19 @@ body {
 
 /* headings */
 h1 {
-  @apply text-4xl font-inter;
+  @apply text-4xl text-slate-800 dark:text-slate-200;
 }
 
 h2 {
-  @apply text-3xl font-inter;
+  @apply text-3xl text-slate-800 dark:text-slate-200;
 }
 
 h3 {
-  @apply text-2xl font-inter;
+  @apply text-2xl text-slate-800 dark:text-slate-200;
 }
 
 a {
-  @apply text-blue-600! hover:text-blue-700! dark:hover:text-blue-500!;
+  /* @apply text-blue-600! hover:text-blue-700! dark:hover:text-blue-500!; */
 }
 
 /* scrollbar */

@@ -1,6 +1,13 @@
 name: deployment-production
 
 on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'select user'
+        default: ''
+        required: true
+        type: string
   push:
     branches:
       - main

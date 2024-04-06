@@ -43,9 +43,7 @@ const onSubmit = async () => {
           layout="vertical"
         />
       </div>
-      <component :is="BaseButton" type="submit" variant="fill" color="primary">
-        Request Reset Password
-      </component>
+      <component :is="BaseButton" type="submit" color="primary"> Request Reset Password </component>
     </form>
     <div class="mt-4">Remember Password ? <router-link to="/auth/signin">Sign In</router-link></div>
   </component>

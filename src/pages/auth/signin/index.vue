@@ -49,9 +49,7 @@ const onSubmit = async () => {
         </div>
       </div>
       <div>
-        <component :is="BaseButton" type="submit" variant="fill" is-block color="primary">
-          Sign In
-        </component>
+        <component :is="BaseButton" type="submit" is-block color="primary"> Sign In </component>
         <!-- <component :is="BaseDivider" orientation="vertical" text="or continue with" />
         <div class="flex gap-2">
           <component :is="BaseButton" type="button" variant="outline" class="shadow">

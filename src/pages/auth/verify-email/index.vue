@@ -48,9 +48,7 @@ const onSubmit = async () => {
           layout="vertical"
         />
       </div>
-      <component :is="BaseButton" type="submit" variant="fill" color="primary">
-        Verify Email
-      </component>
+      <component :is="BaseButton" type="submit" color="primary"> Verify Email </component>
     </form>
   </component>
 </template>

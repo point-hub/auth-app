@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { BaseButton, BaseCard, BaseCheckbox, BaseInput } from '@point-hub/papp'
-import { reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import { useForm } from './form'
 import { usePassword } from './password'
@@ -9,27 +9,34 @@ import { useSigninApi } from './signin.api'
 const form = reactive(useForm())
 const password = reactive(usePassword())
 const signinApi = useSigninApi()
+const router = useRouter()
+const usernameRef = ref()
+
+onMounted(() => {
+  usernameRef.value.inputRef.focus()
+})
 
 const onSubmit = async () => {
   const response = await signinApi.send(form.data, form.errors)
-  console.log(response)
+  if (response) {
+    router.push('/')
+  }
 }
 </script>
 
 <template>
-  <component :is="BaseCard" class="max-w-xl">
+  <base-card class="max-w-xl">
     <form @submit.prevent="onSubmit" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
-        <component
-          :is="BaseInput"
+        <base-input
+          ref="usernameRef"
           required
           v-model="form.data.username"
           :errors="form.errors.username"
           label="Username / Email"
           layout="vertical"
         />
-        <component
-          :is="BaseInput"
+        <base-input
           required
           :type="password.type"
           v-model="form.data.password"
@@ -42,14 +49,14 @@ const onSubmit = async () => {
               <BaseIcon icon="i-far-eye" />
             </BaseButton>
           </template>
-        </component>
+        </base-input>
         <div class="flex justify-between">
-          <component :is="BaseCheckbox" v-model="form.data.rememberMe" text="Remember Me" />
+          <base-checkbox v-model="form.data.rememberMe" text="Remember Me" />
           <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
         </div>
       </div>
       <div>
-        <component :is="BaseButton" type="submit" is-block color="primary"> Sign In </component>
+        <base-button type="submit" is-block color="primary"> Sign In </base-button>
         <!-- <component :is="BaseDivider" orientation="vertical" text="or continue with" />
         <div class="flex gap-2">
           <component :is="BaseButton" type="button" variant="outline" class="shadow">
@@ -72,7 +79,7 @@ const onSubmit = async () => {
     <div class="mt-8">
       Don't have an account ? <router-link to="/auth/signup">Sign Up</router-link>
     </div>
-  </component>
+  </base-card>
 </template>
 
 <style scoped lang="postcss"></style>

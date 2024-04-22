@@ -25,7 +25,7 @@ const toggleRevealPassword = () => {
   <component :is="BaseCard" class="max-w-xl">
     <form @submit.prevent="" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
-        <component :is="BaseInput" v-model="form.email" label="Email" layout="vertical" />
+        <component :is="BaseInput" v-model="form.email" label="Email" layout="vertical" autofocus />
         <component :is="BaseInput" v-model="form.username" label="Username" layout="vertical" />
         <component
           :is="BaseInput"

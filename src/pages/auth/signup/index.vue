@@ -69,6 +69,7 @@ const onSubmit = async () => {
           :is="BaseInput"
           required
           label="Name"
+          autofocus
           layout="vertical"
           v-model="form.data.name"
           :errors="form.data.errors.name"

@@ -165,7 +165,7 @@ const breadcrumbs = [
                   placeholder="Search"
                   border="none"
                   class="font-normal text-slate-800 dark:text-slate-400"
-                ></base-input>
+                />
               </th>
               <th v-if="columns[2].isShow" class="basic-table-head">
                 <base-autocomplete

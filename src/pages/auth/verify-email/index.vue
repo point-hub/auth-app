@@ -46,6 +46,7 @@ const onSubmit = async () => {
           :errors="form.errors.code"
           label="Code"
           layout="vertical"
+          autofocus
         />
       </div>
       <component :is="BaseButton" type="submit" color="primary"> Verify Email </component>

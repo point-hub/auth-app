@@ -79,6 +79,10 @@ const router = createRouter({
       component: () => import('../layouts/auth.vue'),
       children: [
         {
+          path: '',
+          redirect: 'auth/signin'
+        },
+        {
           path: 'signin',
           component: () => import('@/pages/auth/signin/index.vue')
         },
@@ -102,7 +106,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      component: () => import('@/pages/403.vue')
+      component: () => import('@/pages/404.vue')
     }
   ]
 })

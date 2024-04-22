@@ -1,12 +1,30 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import { useToastStore } from '@/stores/toast-store'
 
 const { toastRef } = useToastStore()
 const updateIndex = ref(-1)
 const ipAddressInput = ref()
+const ipAddressInputRef = ref()
 const ipAddressRestrictions = defineModel<string[]>('ipAddressRestrictions', { required: true })
+const searchText = ref()
+const filtered = ref()
+
+onMounted(() => {
+  filtered.value = ipAddressRestrictions.value
+})
+
+watch(ipAddressRestrictions.value, () => {
+  filtered.value = ipAddressRestrictions.value
+  searchText.value = ''
+})
+
+const onSearch = () => {
+  filtered.value = ipAddressRestrictions.value.filter((value: string) => {
+    return value.includes(searchText.value)
+  })
+}
 
 const onSave = () => {
   let isExists = false
@@ -34,6 +52,7 @@ const onSave = () => {
 const onUpdate = (index: number, value: string) => {
   updateIndex.value = index
   ipAddressInput.value = value
+  ipAddressInputRef.value.inputRef.focus()
 }
 
 const onDelete = (value: string) => {
@@ -59,16 +78,23 @@ const onDelete = (value: string) => {
       <thead>
         <tr>
           <th>
-            <base-input border="none" class="font-light" placeholder="Search" />
+            <base-input
+              border="none"
+              placeholder="Search"
+              v-model="searchText"
+              @keyup="onSearch()"
+              class="font-light"
+            >
+              <template #prefix>
+                <base-icon icon="i-far-magnifying-glass mr-1" />
+              </template>
+            </base-input>
           </th>
           <th class="w-1"></th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="(ipAddressRestriction, index) in ipAddressRestrictions"
-          :key="ipAddressRestriction"
-        >
+        <tr v-for="(ipAddressRestriction, index) in filtered" :key="ipAddressRestriction">
           <td>{{ ipAddressRestriction }}</td>
           <td>
             <div class="flex">
@@ -88,7 +114,7 @@ const onDelete = (value: string) => {
       </tbody>
     </base-table>
     <form class="flex flex-col gap-4 mt-5" @submit.prevent="onSave">
-      <base-input v-model="ipAddressInput" label="IP Address" required>
+      <base-input v-model="ipAddressInput" ref="ipAddressInputRef" required label="IP Address">
         <template #suffix>
           <base-button type="submit" color="primary" variant="text">
             <base-icon icon="i-far-plus" />

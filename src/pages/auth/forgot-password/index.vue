@@ -41,6 +41,7 @@ const onSubmit = async () => {
           :errors="form.errors.email"
           label="Email"
           layout="vertical"
+          autofocus
         />
       </div>
       <component :is="BaseButton" type="submit" color="primary"> Request Reset Password </component>

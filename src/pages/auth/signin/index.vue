@@ -52,7 +52,7 @@ const onSubmit = async () => {
         </base-input>
         <div class="flex justify-between">
           <base-checkbox v-model="form.data.rememberMe" text="Remember Me" />
-          <router-link to="/auth/forgot-password" class="">Forgot Password</router-link>
+          <router-link to="/auth/forgot-password">Forgot Password</router-link>
         </div>
       </div>
       <div>

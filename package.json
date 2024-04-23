@@ -19,6 +19,7 @@
     "@point-hub/js-utils": "^0.0.1",
     "@point-hub/papp": "0.0.37",
     "@point-hub/vue-cookie": "^0.2.1",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "pinia": "^2.1.7",
     "vue": "^3.4.23",

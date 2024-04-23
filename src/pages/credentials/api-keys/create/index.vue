@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import axios from '@/axios'
+import { useToastStore } from '@/stores/toast-store'
 
 import CardApiKeys from './card-api-keys.vue'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 import CardIpAddressRestrictions from './card-ip-address-restrictions.vue'
 import CardWebRestrictions from './card-web-restrictions.vue'
+
+const router = useRouter()
+const { toastRef } = useToastStore()
 
 const form = ref<{
   name: string
@@ -16,7 +23,13 @@ const form = ref<{
   ip_address_restrictions: []
 })
 
-const onSave = () => {}
+const onSave = async () => {
+  const response = await axios.post('/v1/api-keys', form.value)
+  if (response.status === 201) {
+    toastRef.toast('Create success')
+    router.push('/credentials/api-keys')
+  }
+}
 </script>
 
 <template>

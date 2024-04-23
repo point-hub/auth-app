@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { watchDebounced } from '@vueuse/core'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import axios from '@/axios'
+
+import CardBreadcrumbs from './card-breadcrumbs.vue'
+
+const route = useRoute()
+const router = useRouter()
 
 // Table Header
 const options = [
@@ -12,127 +21,69 @@ const selected = ref()
 const searchAll = ref('')
 const search = ref<string[]>([])
 
-// Table Data
-interface UserInterface {
-  id: number
-  name: string
-  created_date: string
-  key: string
-  checked?: boolean
-}
-
-const users = ref<UserInterface[]>([
-  {
-    id: 1,
-    name: 'Cy Ganderton',
-    created_date: '21 Jan 2024',
-    key: 'Blue'
+watchDebounced(
+  searchAll,
+  async () => {
+    // reset page 1
+    pagination.value.page = 1
+    // update url query params
+    router.push({
+      path: '/credentials/api-keys',
+      query: {
+        search: searchAll.value,
+        page: pagination.value.page
+      }
+    })
+    // call api
+    await getApiKeys()
   },
-  {
-    id: 2,
-    name: 'Hart Hagerty',
-    created_date: '24 Feb 2024',
-    key: 'Purple'
-  },
-  { id: 3, name: 'Brice Swyre', created_date: '19 Aug 2012', key: 'A391feh.....' }
-])
+  { debounce: 500, maxWait: 1000 }
+)
 
 // Section Pagination
-const page = ref(1)
-const pageSize = ref(3)
-const totalDocument = ref(100)
+const updateData = async () => {
+  router.push({
+    path: '/credentials/api-keys',
+    query: {
+      search: searchAll.value,
+      page: pagination.value.page
+    }
+  })
+  await getApiKeys()
+}
 
-const updateData = () => {}
+const getApiKeys = async () => {
+  const response = await axios.get('/v1/api-keys', {
+    params: {
+      filter: {
+        search: searchAll.value
+      },
+      page: pagination.value.page
+    }
+  })
+  apiKeys.value = response.data.data
+  pagination.value = response.data.pagination
+}
 
 // Table Setting
-const showModal = ref(false)
-const openTableSetting = () => {
-  showModal.value = true
-}
+const columns = ['', 'Name', 'Created Date', 'Api Key']
 
-const columns = ref([
-  {
-    name: 'Checkbox',
-    isShow: true,
-    isEditable: true
-  },
-  {
-    name: 'Name',
-    isShow: true,
-    isEditable: false
-  },
-  {
-    name: 'Created Date',
-    isShow: true,
-    isEditable: true
-  },
-  {
-    name: 'Key',
-    isShow: true,
-    isEditable: true
-  }
-])
-
-const optionsPageSize = [
-  { value: 10, label: '10' },
-  { value: 25, label: '25' },
-  { value: 50, label: '50' },
-  { value: 100, label: '100' }
-]
-
-// Selecting Table Row
-const selectAll = computed({
-  get() {
-    return isCheckedAll()
-  },
-  set() {
-    if (isCheckedAll()) {
-      users.value.forEach((user) => {
-        user.checked = false
-      })
-    } else {
-      users.value.forEach((user) => {
-        user.checked = true
-      })
-    }
-  }
+const apiKeys = ref()
+const pagination = ref({
+  page: 1,
+  page_size: 10,
+  total_document: 100
 })
-
-const isCheckedAll = () => {
-  for (const user of users.value) {
-    if (user.checked === undefined || user.checked === false) {
-      return false
-    }
-  }
-
-  return true
-}
-
-const breadcrumbs = [
-  {
-    name: 'Menu',
-    path: '/menu'
-  },
-  {
-    name: 'Credentials',
-    path: '/credentials'
-  },
-  {
-    name: 'API Keys'
-  }
-]
+onMounted(async () => {
+  searchAll.value = route.query.search?.toString() ?? ''
+  pagination.value.page = Number(route.query.page ?? 1)
+  await getApiKeys()
+})
 </script>
 
 <template>
   <div class="flex flex-col gap-4">
-    <base-card class="py-3!">
-      <base-breadcrumb :items="breadcrumbs" separator="angle" v-slot="{ item }">
-        <router-link v-if="item.path" :to="item.path">
-          {{ item.name }}
-        </router-link>
-        <span v-else>{{ item.name }}</span>
-      </base-breadcrumb>
-    </base-card>
+    <card-breadcrumbs />
 
     <base-card>
       <template #header>API Keys</template>
@@ -151,14 +102,14 @@ const breadcrumbs = [
         <base-table>
           <thead>
             <tr>
-              <th v-if="columns[3].isShow" class="w-1"></th>
-              <th v-if="columns[1].isShow">{{ columns[1].name }}</th>
-              <th v-if="columns[2].isShow">{{ columns[2].name }}</th>
-              <th v-if="columns[3].isShow">{{ columns[3].name }}</th>
+              <th class="w-1"></th>
+              <th>{{ columns[1] }}</th>
+              <th>{{ columns[2] }}</th>
+              <th>{{ columns[3] }}</th>
             </tr>
             <tr class="bg-slate-50 dark:bg-slate-700">
               <th></th>
-              <th v-if="columns[1].isShow" class="basic-table-head">
+              <th class="basic-table-head">
                 <base-input
                   required
                   v-model="search[0]"
@@ -167,7 +118,7 @@ const breadcrumbs = [
                   class="font-normal text-slate-800 dark:text-slate-400"
                 />
               </th>
-              <th v-if="columns[2].isShow" class="basic-table-head">
+              <th class="basic-table-head">
                 <base-autocomplete
                   class="font-normal"
                   v-model="selected"
@@ -176,7 +127,7 @@ const breadcrumbs = [
                   border="none"
                 ></base-autocomplete>
               </th>
-              <th v-if="columns[3].isShow" class="basic-table-head">
+              <th class="basic-table-head">
                 <base-input
                   required
                   v-model="search[0]"
@@ -189,7 +140,7 @@ const breadcrumbs = [
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in users" :key="index">
+            <tr v-for="(apiKey, index) in apiKeys" :key="index">
               <td>
                 <base-popover placement="bottom">
                   <base-button size="xs">
@@ -222,20 +173,20 @@ const breadcrumbs = [
                   </template>
                 </base-popover>
               </td>
-              <td v-if="columns[1].isShow">
+              <td>
                 <base-link size="none" href="#" class="text-blue">
-                  {{ user.name }}
+                  {{ apiKey.name }}
                 </base-link>
               </td>
-              <td v-if="columns[2].isShow">{{ user.created_date }}</td>
-              <td v-if="columns[3].isShow">{{ user.key }}</td>
+              <td>{{ apiKey.created_date }}</td>
+              <td>{{ apiKey.prefix_api_key }}...</td>
             </tr>
           </tbody>
         </base-table>
         <base-pagination
-          v-model="page"
-          :page-size="pageSize"
-          :totalDocument="totalDocument"
+          v-model="pagination.page"
+          :page-size="pagination.page_size"
+          :total-document="pagination.total_document"
           @update:model-value="updateData()"
         />
       </div>

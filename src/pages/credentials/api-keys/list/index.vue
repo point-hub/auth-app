@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { isDate } from '@point-hub/js-utils'
 import { watchDebounced } from '@vueuse/core'
+import { format, formatDate } from 'date-fns'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -19,11 +21,17 @@ const options = [
 
 const selected = ref()
 const searchAll = ref('')
-const search = ref<string[]>([])
+const search = ref({
+  name: '',
+  createdDate: '',
+  apiKey: ''
+})
+const isLoading = ref(false)
 
 watchDebounced(
   searchAll,
   async () => {
+    isLoading.value = true
     // reset page 1
     pagination.value.page = 1
     // update url query params
@@ -36,6 +44,29 @@ watchDebounced(
     })
     // call api
     await getApiKeys()
+    isLoading.value = false
+  },
+  { debounce: 500, maxWait: 1000 }
+)
+
+watchDebounced(
+  search.value,
+  async () => {
+    isLoading.value = true
+    // reset page 1
+    pagination.value.page = 1
+    // update url query params
+    router.push({
+      path: '/credentials/api-keys',
+      query: {
+        search: searchAll.value,
+
+        page: pagination.value.page
+      }
+    })
+    // call api
+    await getApiKeys()
+    isLoading.value = false
   },
   { debounce: 500, maxWait: 1000 }
 )
@@ -53,10 +84,17 @@ const updateData = async () => {
 }
 
 const getApiKeys = async () => {
+  const date = search.value.createdDate.split('-')
+  console.log(new Date(`${date[1]}-${date[0]}-${date[2]}`))
   const response = await axios.get('/v1/api-keys', {
     params: {
       filter: {
-        search: searchAll.value
+        search: searchAll.value,
+        name: search.value.name,
+        created_date: isDate(`${date[1]}-${date[0]}-${date[2]}`)
+          ? new Date(`${date[1]}-${date[0]}-${date[2]} 00:00:00`)
+          : '',
+        prefix_api_key: search.value.apiKey
       },
       page: pagination.value.page
     }
@@ -65,14 +103,11 @@ const getApiKeys = async () => {
   pagination.value = response.data.pagination
 }
 
-// Table Setting
-const columns = ['', 'Name', 'Created Date', 'Api Key']
-
 const apiKeys = ref()
 const pagination = ref({
   page: 1,
   page_size: 10,
-  total_document: 100
+  total_document: 0
 })
 onMounted(async () => {
   searchAll.value = route.query.search?.toString() ?? ''
@@ -84,7 +119,7 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col gap-4">
     <card-breadcrumbs />
-
+    {{ search }}
     <base-card>
       <template #header>API Keys</template>
       <p>
@@ -103,87 +138,79 @@ onMounted(async () => {
           <thead>
             <tr>
               <th class="w-1"></th>
-              <th>{{ columns[1] }}</th>
-              <th>{{ columns[2] }}</th>
-              <th>{{ columns[3] }}</th>
+              <th>Name</th>
+              <th>Created Date</th>
+              <th>Api Key</th>
             </tr>
             <tr class="bg-slate-50 dark:bg-slate-700">
               <th></th>
               <th class="basic-table-head">
-                <base-input
-                  required
-                  v-model="search[0]"
-                  placeholder="Search"
-                  border="none"
-                  class="font-normal text-slate-800 dark:text-slate-400"
-                />
+                <base-input required v-model="search.name" placeholder="Search" border="none" />
               </th>
               <th class="basic-table-head">
-                <base-autocomplete
-                  class="font-normal"
-                  v-model="selected"
-                  :options="options"
-                  placeholder="Search"
-                  border="none"
-                ></base-autocomplete>
+                <base-datepicker v-model="search.createdDate" border="none" />
               </th>
               <th class="basic-table-head">
-                <base-input
-                  required
-                  v-model="search[0]"
-                  placeholder="Search"
-                  border="none"
-                  class="font-light text-slate-800 dark:text-slate-400"
-                ></base-input>
+                <base-input required v-model="search.apiKey" placeholder="Search" border="none" />
               </th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(apiKey, index) in apiKeys" :key="index">
-              <td>
-                <base-popover placement="bottom">
-                  <base-button size="xs">
-                    <base-icon class="text-xl" icon="i-ph-dots-three-bold"></base-icon>
-                  </base-button>
-                  <template #content>
-                    <base-card class="py-1! px-2! text-sm">
-                      <div class="flex flex-col">
-                        <base-link href="#" variant="text" color="info">
-                          <div class="flex gap-2 w-full">
-                            <base-icon class="text-xl" icon="i-ph-eye"></base-icon>
-                            <p>Show</p>
-                          </div>
-                        </base-link>
-                        <base-link href="#" variant="text" color="info">
-                          <div class="flex gap-2 w-full">
-                            <base-icon class="text-xl" icon="i-ph-pencil"></base-icon>
-                            <p>Update</p>
-                          </div>
-                        </base-link>
-                        <base-divider orientation="vertical" class="my-1!"></base-divider>
-                        <base-button variant="text" color="danger">
-                          <div class="flex gap-2 w-full">
-                            <base-icon class="text-xl" icon="i-ph-trash"></base-icon>
-                            <p>Delete</p>
-                          </div>
-                        </base-button>
-                      </div>
-                    </base-card>
-                  </template>
-                </base-popover>
+            <tr v-if="isLoading">
+              <td colspan="4">
+                <p class="w-full h-32 flex items-center justify-center gap-2 text-center text-xl">
+                  <base-spinner color="primary" size="xs" /> <span>Loading</span>
+                </p>
               </td>
-              <td>
-                <base-link size="none" href="#" class="text-blue">
-                  {{ apiKey.name }}
-                </base-link>
-              </td>
-              <td>{{ apiKey.created_date }}</td>
-              <td>{{ apiKey.prefix_api_key }}...</td>
             </tr>
+            <template v-if="!isLoading">
+              <tr v-for="(apiKey, index) in apiKeys" :key="index">
+                <td>
+                  <base-popover placement="bottom">
+                    <base-button size="xs">
+                      <base-icon class="text-xl" icon="i-ph-dots-three-bold"></base-icon>
+                    </base-button>
+                    <template #content>
+                      <base-card class="py-1! px-2! text-sm">
+                        <div class="flex flex-col">
+                          <base-link href="#" variant="text" color="info">
+                            <div class="flex gap-2 w-full">
+                              <base-icon class="text-xl" icon="i-ph-eye"></base-icon>
+                              <p>Show</p>
+                            </div>
+                          </base-link>
+                          <base-link href="#" variant="text" color="info">
+                            <div class="flex gap-2 w-full">
+                              <base-icon class="text-xl" icon="i-ph-pencil"></base-icon>
+                              <p>Update</p>
+                            </div>
+                          </base-link>
+                          <base-divider orientation="vertical" class="my-1!"></base-divider>
+                          <base-button variant="text" color="danger">
+                            <div class="flex gap-2 w-full">
+                              <base-icon class="text-xl" icon="i-ph-trash"></base-icon>
+                              <p>Delete</p>
+                            </div>
+                          </base-button>
+                        </div>
+                      </base-card>
+                    </template>
+                  </base-popover>
+                </td>
+                <td>
+                  <base-link size="none" href="#" class="text-blue">
+                    {{ apiKey.name }}
+                  </base-link>
+                </td>
+                <td>{{ format(new Date(apiKey.created_date), 'dd-MM-yyyy') }}</td>
+                <td>{{ apiKey.prefix_api_key }}...</td>
+              </tr>
+            </template>
           </tbody>
         </base-table>
         <base-pagination
+          v-if="!isLoading"
           v-model="pagination.page"
           :page-size="pagination.page_size"
           :total-document="pagination.total_document"

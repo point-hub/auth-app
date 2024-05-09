@@ -39,7 +39,7 @@ const router = createRouter({
                 },
                 {
                   path: ':id',
-                  component: () => import('@/pages/credentials/api-keys/create/index.vue')
+                  component: () => import('@/pages/credentials/api-keys/detail/index.vue')
                 },
 
                 {

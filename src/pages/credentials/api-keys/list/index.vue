@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isDate } from '@point-hub/js-utils'
 import { watchDebounced } from '@vueuse/core'
-import { format, formatDate } from 'date-fns'
+import { formatDate } from 'date-fns'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -12,14 +12,6 @@ import CardBreadcrumbs from './card-breadcrumbs.vue'
 const route = useRoute()
 const router = useRouter()
 
-// Table Header
-const options = [
-  { id: 1, label: 'Quality Control Specialist' },
-  { id: 2, label: 'Desktop Support Technician' },
-  { id: 3, label: 'Tax Accountant' }
-]
-
-const selected = ref()
 const searchAll = ref('')
 const search = ref({
   name: '',
@@ -60,7 +52,6 @@ watchDebounced(
       path: '/credentials/api-keys',
       query: {
         search: searchAll.value,
-
         page: pagination.value.page
       }
     })
@@ -85,14 +76,13 @@ const updateData = async () => {
 
 const getApiKeys = async () => {
   const date = search.value.createdDate.split('-')
-  console.log(new Date(`${date[1]}-${date[0]}-${date[2]}`))
   const response = await axios.get('/v1/api-keys', {
     params: {
       filter: {
         search: searchAll.value,
         name: search.value.name,
-        created_date: isDate(`${date[1]}-${date[0]}-${date[2]}`)
-          ? new Date(`${date[1]}-${date[0]}-${date[2]} 00:00:00`)
+        created_date: isDate(`${date[2]}-${date[1]}-${date[0]}`)
+          ? new Date(`${date[2]}-${date[1]}-${date[0]} 00:00:00`)
           : '',
         prefix_api_key: search.value.apiKey
       },
@@ -119,7 +109,6 @@ onMounted(async () => {
 <template>
   <div class="flex flex-col gap-4">
     <card-breadcrumbs />
-    {{ search }}
     <base-card>
       <template #header>API Keys</template>
       <p>
@@ -199,11 +188,11 @@ onMounted(async () => {
                   </base-popover>
                 </td>
                 <td>
-                  <base-link size="none" href="#" class="text-blue">
+                  <router-link :to="`/credentials/api-keys/${apiKey._id}`" class="text-blue">
                     {{ apiKey.name }}
-                  </base-link>
+                  </router-link>
                 </td>
-                <td>{{ format(new Date(apiKey.created_date), 'dd-MM-yyyy') }}</td>
+                <td>{{ formatDate(new Date(apiKey.created_date), 'dd-MM-yy1yy') }}</td>
                 <td>{{ apiKey.prefix_api_key }}...</td>
               </tr>
             </template>

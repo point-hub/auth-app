@@ -192,7 +192,7 @@ onMounted(async () => {
                     {{ apiKey.name }}
                   </router-link>
                 </td>
-                <td>{{ formatDate(new Date(apiKey.created_date), 'dd-MM-yy1yy') }}</td>
+                <td>{{ formatDate(new Date(apiKey.created_date), 'dd-MM-yyyy') }}</td>
                 <td>{{ apiKey.prefix_api_key }}...</td>
               </tr>
             </template>

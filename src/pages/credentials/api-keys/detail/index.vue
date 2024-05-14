@@ -37,8 +37,8 @@ onMounted(async () => {
   prefixApiKey.value = apiKeyResponse.value.prefix_api_key
 })
 
-const onSave = async () => {
-  const response = await axios.post('/v1/api-keys', form.value)
+const onUpdate = async () => {
+  const response = await axios.patch(`/v1/api-keys/${formId.value}`, form.value)
   if (response.status === 201) {
     toastRef.toast('Create success')
     router.push('/credentials/api-keys')
@@ -50,7 +50,11 @@ const onSave = async () => {
   <div class="flex flex-col gap-4">
     <card-breadcrumbs :id="route.params.id.toString()" />
 
-    <card-api-keys v-model:name="form.name" />
+    <card-api-keys
+      v-model:name="form.name"
+      v-model:prefixApiKey="prefixApiKey"
+      :form-id="route.params.id.toString()"
+    />
 
     <card-web-restrictions v-model:webRestrictions="form.web_restrictions" />
 
@@ -58,13 +62,11 @@ const onSave = async () => {
 
     <base-card>
       <div class="flex gap-2">
-        <base-button color="primary" @click="onSave()">Save & Generate Key</base-button>
-        <router-link to="/credentials/api-keys">
+        <base-button color="primary" @click="onUpdate()">Update</base-button>
+        <router-link :to="`/credentials/api-keys`">
           <base-button color="danger">Cancel</base-button>
         </router-link>
       </div>
     </base-card>
   </div>
 </template>
-
-<style scoped lang="postcss"></style>

@@ -23,10 +23,19 @@ const form = ref<{
   ip_address_restrictions: []
 })
 
+const showApiKeyModal = ref(false)
+const toggleApiKeyModal = (value: boolean) => {
+  let newValue = !showApiKeyModal.value
+  if (value === true) newValue = true
+  if (value === false) newValue = false
+  showApiKeyModal.value = newValue
+}
+
 const onSave = async () => {
   const response = await axios.post('/v1/api-keys', form.value)
   if (response.status === 201) {
     toastRef.toast('Create success')
+    showApiKeyModal.value = true
     router.push('/credentials/api-keys')
   }
 }
@@ -50,6 +59,24 @@ const onSave = async () => {
         </router-link>
       </div>
     </base-card>
+
+    <!-- success confirmation, and inform user to save the api key -->
+    <base-modal :is-open="showApiKeyModal" @on-close="toggleApiKeyModal(false)">
+      <div class="max-h-90vh overflow-auto p-4">
+        <h2 class="py-4 text-2xl font-bold">Regenerate API Key</h2>
+        <div class="space-y-8">
+          <p>
+            Are you sure you want to regenerate this API Key? Any applications or scripts using this
+            API Key will no longer be able to access the Auth API. You cannot undo this action.
+          </p>
+          <div class="flex gap-2">
+            <base-button color="primary" size="sm" @click="toggleApiKeyModal(false)">
+              I Understand, Regenerate this API Key.
+            </base-button>
+          </div>
+        </div>
+      </div>
+    </base-modal>
   </div>
 </template>
 

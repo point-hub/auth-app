@@ -7,11 +7,21 @@ import { useRoute, useRouter } from 'vue-router'
 
 import axios from '@/axios'
 
+import { useDeleteApi } from '../api/delete'
+import DeleteModal from '../components/delete-modal.vue'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 
+const apiDelete = useDeleteApi()
 const route = useRoute()
 const router = useRouter()
-
+const deleteModalRef = ref()
+interface IApiKey {
+  _id: string
+  name: string
+  created_date: string
+  prefix_api_key: string
+  apiKey: string
+}
 const searchAll = ref('')
 const search = ref({
   name: '',
@@ -92,8 +102,8 @@ const getApiKeys = async () => {
   apiKeys.value = response.data.data
   pagination.value = response.data.pagination
 }
-
-const apiKeys = ref()
+const rowMenuRef = ref()
+const apiKeys = ref<IApiKey[]>()
 const pagination = ref({
   page: 1,
   page_size: 10,
@@ -104,6 +114,16 @@ onMounted(async () => {
   pagination.value.page = Number(route.query.page ?? 1)
   await getApiKeys()
 })
+const openMenu = (apiKey: IApiKey, index: number) => {
+  rowMenuRef.value[index].toggle(false)
+  deleteModalRef.value.toggleDeleteModalInfo(true, {
+    id: apiKey._id,
+    name: apiKey.name
+  })
+}
+const onDelete = async () => {
+  await getApiKeys()
+}
 </script>
 
 <template>
@@ -156,27 +176,27 @@ onMounted(async () => {
             <template v-if="!isLoading">
               <tr v-for="(apiKey, index) in apiKeys" :key="index">
                 <td>
-                  <base-popover placement="bottom">
-                    <base-button size="xs">
+                  <base-popover placement="bottom" ref="rowMenuRef">
+                    <base-button size="xs" @click="rowMenuRef[index].toggle()">
                       <base-icon class="text-xl" icon="i-ph-dots-three-bold"></base-icon>
                     </base-button>
                     <template #content>
                       <base-card class="py-1! px-2! text-sm">
                         <div class="flex flex-col">
-                          <base-link href="#" variant="text" color="info">
-                            <div class="flex gap-2 w-full">
-                              <base-icon class="text-xl" icon="i-ph-eye"></base-icon>
-                              <p>Show</p>
-                            </div>
-                          </base-link>
-                          <base-link href="#" variant="text" color="info">
-                            <div class="flex gap-2 w-full">
-                              <base-icon class="text-xl" icon="i-ph-pencil"></base-icon>
-                              <p>Update</p>
-                            </div>
-                          </base-link>
+                          <router-link :to="`/credentials/api-keys/${apiKey._id}`">
+                            <base-button variant="text" color="info">
+                              <div class="flex gap-2 w-full">
+                                <base-icon class="text-xl" icon="i-ph-pencil"></base-icon>
+                                <p>Manage</p>
+                              </div>
+                            </base-button>
+                          </router-link>
                           <base-divider orientation="vertical" class="my-1!"></base-divider>
-                          <base-button variant="text" color="danger">
+                          <base-button
+                            variant="text"
+                            color="danger"
+                            @click="openMenu(apiKey, index)"
+                          >
                             <div class="flex gap-2 w-full">
                               <base-icon class="text-xl" icon="i-ph-trash"></base-icon>
                               <p>Delete</p>
@@ -207,6 +227,7 @@ onMounted(async () => {
         />
       </div>
     </base-card>
+    <delete-modal ref="deleteModalRef" @deleted="onDelete" />
   </div>
 </template>
 

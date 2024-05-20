@@ -38,11 +38,37 @@ onMounted(async () => {
 })
 
 const onUpdate = async () => {
-  const response = await axios.patch(`/v1/api-keys/${formId.value}`, form.value)
+  const response = await axios.patch(`/v1/api-keys/${route.params.id}`, form.value)
   if (response.status === 201) {
     toastRef.toast('Create success')
     router.push('/credentials/api-keys')
   }
+}
+
+// regenerate modal logic
+const showDeleteModalInfo = ref(false)
+const toggleDeleteModalInfo = (value: boolean) => {
+  let newValue = !showDeleteModalInfo.value
+  if (value === true) newValue = true
+  if (value === false) newValue = false
+  showDeleteModalInfo.value = newValue
+}
+
+const onDeleteLoading = ref(false)
+const onDelete = async () => {
+  // prevent calling twice use loading state
+  if (onDeleteLoading.value) return
+  // start loading state
+  onDeleteLoading.value = true
+  // start api call
+  const response = await axios.patch(`/v1/api-keys/${route.params.id}`)
+  if (response.status === 200) {
+    toastRef.toast(`Delete API key "${form.value.name}" success`)
+    toggleDeleteModalInfo(false)
+    router.push('/credentials/api-keys')
+  }
+  // stop loading state
+  onDeleteLoading.value = false
 }
 </script>
 
@@ -63,8 +89,33 @@ const onUpdate = async () => {
     <base-card>
       <div class="flex gap-2">
         <base-button color="primary" @click="onUpdate()">Update</base-button>
+        <base-button color="danger" @click="toggleDeleteModalInfo(true)">Delete</base-button>
+        <base-modal :is-open="showDeleteModalInfo" @on-close="toggleDeleteModalInfo(false)">
+          <div class="max-h-90vh overflow-auto p-4">
+            <h2 class="py-4 text-2xl font-bold">Delete API Key</h2>
+            <div class="space-y-8">
+              <p>
+                Are you sure you want to delete this API Key? Any applications or scripts using this
+                API Key will no longer be able to access the Auth API. You cannot undo this action.
+              </p>
+              <div class="flex gap-2">
+                <base-button
+                  color="danger"
+                  size="sm"
+                  @click="onDelete()"
+                  :disabled="onDeleteLoading"
+                >
+                  I Understand, Delete this API Key.
+                </base-button>
+                <base-button color="secondary" size="sm" @click="toggleDeleteModalInfo(false)">
+                  Cancel
+                </base-button>
+              </div>
+            </div>
+          </div>
+        </base-modal>
         <router-link :to="`/credentials/api-keys`">
-          <base-button color="danger">Cancel</base-button>
+          <base-button color="secondary">Cancel</base-button>
         </router-link>
       </div>
     </base-card>

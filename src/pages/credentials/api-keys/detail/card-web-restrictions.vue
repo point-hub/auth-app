@@ -36,7 +36,7 @@ const onSave = () => {
   for (const webRestriction of webRestrictions.value) {
     if (webRestriction === webRestrictionInput.value) {
       isExists = true
-      toastRef.toast('URL is exists', { color: 'danger' })
+      toastRef.toast(`URL "${webRestriction}" is exists`, { color: 'danger' })
       return
     }
   }
@@ -61,12 +61,10 @@ const onUpdate = (index: number, value: string) => {
 }
 
 const onDelete = (value: string) => {
-  if (confirm(`are you sure want to delete ${value}`)) {
-    for (const [index, iterator] of webRestrictions.value.entries()) {
-      if (iterator === value) {
-        webRestrictions.value.splice(index, 1)
-        break
-      }
+  for (const [index, iterator] of webRestrictions.value.entries()) {
+    if (iterator === value) {
+      webRestrictions.value.splice(index, 1)
+      break
     }
   }
 }

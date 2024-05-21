@@ -31,7 +31,7 @@ const onSave = () => {
   for (const ipAddressRestriction of ipAddressRestrictions.value) {
     if (ipAddressRestriction === ipAddressInput.value) {
       isExists = true
-      toastRef.toast('URL is exists', { color: 'danger' })
+      toastRef.toast(`IP address "${ipAddressRestriction}" is exists`, { color: 'danger' })
       return
     }
   }

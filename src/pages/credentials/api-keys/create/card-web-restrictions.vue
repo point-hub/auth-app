@@ -33,7 +33,7 @@ const onSave = () => {
   for (const webRestriction of webRestrictions.value) {
     if (webRestriction === webRestrictionInput.value) {
       isExists = true
-      toastRef.toast('URL is exists', { color: 'danger' })
+      toastRef.toast(`URL "${webRestriction}" is exists`, { color: 'danger' })
       return
     }
   }

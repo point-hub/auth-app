@@ -39,8 +39,8 @@ onMounted(async () => {
 
 const onUpdate = async () => {
   const response = await axios.patch(`/v1/api-keys/${route.params.id}`, form.value)
-  if (response.status === 201) {
-    toastRef.toast('Create success')
+  if (response.status === 200) {
+    toastRef.toast('Update success')
     router.push('/credentials/api-keys')
   }
 }
@@ -75,7 +75,6 @@ const onDelete = async () => {
 <template>
   <div class="flex flex-col gap-4">
     <card-breadcrumbs :id="route.params.id.toString()" />
-
     <card-api-keys
       v-model:name="form.name"
       v-model:prefixApiKey="prefixApiKey"
@@ -114,9 +113,6 @@ const onDelete = async () => {
             </div>
           </div>
         </base-modal>
-        <router-link :to="`/credentials/api-keys`">
-          <base-button color="secondary">Cancel</base-button>
-        </router-link>
       </div>
     </base-card>
   </div>

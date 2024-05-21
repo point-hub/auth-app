@@ -34,7 +34,7 @@ const onSave = () => {
   for (const ipAddressRestriction of ipAddressRestrictions.value) {
     if (ipAddressRestriction === ipAddressInput.value) {
       isExists = true
-      toastRef.toast('URL is exists', { color: 'danger' })
+      toastRef.toast(`IP address "${ipAddressRestriction}" is exists`, { color: 'danger' })
       return
     }
   }
@@ -59,12 +59,10 @@ const onUpdate = (index: number, value: string) => {
 }
 
 const onDelete = (value: string) => {
-  if (confirm(`are you sure want to delete ${value}`)) {
-    for (const [index, iterator] of ipAddressRestrictions.value.entries()) {
-      if (iterator === value) {
-        ipAddressRestrictions.value.splice(index, 1)
-        break
-      }
+  for (const [index, iterator] of ipAddressRestrictions.value.entries()) {
+    if (iterator === value) {
+      ipAddressRestrictions.value.splice(index, 1)
+      break
     }
   }
 }

@@ -7,14 +7,13 @@ import { useRoute, useRouter } from 'vue-router'
 
 import axios from '@/axios'
 
-import { useDeleteApi } from '../api/delete'
 import DeleteModal from '../components/delete-modal.vue'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 
-const apiDelete = useDeleteApi()
 const route = useRoute()
 const router = useRouter()
 const deleteModalRef = ref()
+
 interface IApiKey {
   _id: string
   name: string
@@ -116,7 +115,7 @@ onMounted(async () => {
 })
 const openMenu = (apiKey: IApiKey, index: number) => {
   rowMenuRef.value[index].toggle(false)
-  deleteModalRef.value.toggleDeleteModalInfo(true, {
+  deleteModalRef.value.toggleModal(true, {
     id: apiKey._id,
     name: apiKey.name
   })
@@ -227,6 +226,7 @@ const onDelete = async () => {
         />
       </div>
     </base-card>
+
     <delete-modal ref="deleteModalRef" @deleted="onDelete" />
   </div>
 </template>

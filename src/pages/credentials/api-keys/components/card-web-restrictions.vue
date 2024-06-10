@@ -19,7 +19,7 @@ const webRestrictionInputRef = ref()
 const webRestrictions = defineModel<IWebRestriction[]>('webRestrictions', { required: true })
 const searchText = ref<string>('')
 const filtered = ref()
-const addText = ref('add')
+const submitType = ref<'add' | 'update'>('add')
 
 onMounted(() => {
   filtered.value = webRestrictions.value
@@ -48,7 +48,7 @@ const onSave = () => {
     return
   }
 
-  addText.value = 'add'
+  submitType.value = 'add'
 
   if (updateIndex.value >= 0) {
     // update collection
@@ -70,7 +70,7 @@ const onSave = () => {
 }
 
 const onUpdate = (webRestriction: IWebRestriction) => {
-  addText.value = 'update'
+  submitType.value = 'update'
   webRestrictionPlaceholder.value = webRestriction.url
   updateIndex.value = webRestrictions.value.indexOf(webRestriction)
   webRestrictionInput.value = webRestriction.url
@@ -78,7 +78,7 @@ const onUpdate = (webRestriction: IWebRestriction) => {
 }
 
 const onCancel = () => {
-  addText.value = 'add'
+  submitType.value = 'add'
   updateIndex.value = -1
   webRestrictionInput.value = ''
 }
@@ -86,7 +86,7 @@ const onCancel = () => {
 const onDelete = (webRestriction: IWebRestriction) => {
   for (const [index, iterator] of webRestrictions.value.entries()) {
     if (iterator.id === webRestriction.id) {
-      addText.value = 'add'
+      submitType.value = 'add'
       searchText.value = ''
       updateIndex.value = -1
       webRestrictionInput.value = ''
@@ -157,10 +157,10 @@ const onDelete = (webRestriction: IWebRestriction) => {
             <template #suffix>
               <div class="flex gap-1">
                 <base-button type="submit" color="primary" variant="filled" size="xs">
-                  {{ addText }}
+                  {{ submitType === 'add' ? 'add' : 'update' }}
                 </base-button>
                 <base-button
-                  v-if="addText === 'update'"
+                  v-if="submitType === 'update'"
                   @click="onCancel()"
                   type="button"
                   color="danger"

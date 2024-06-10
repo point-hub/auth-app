@@ -19,7 +19,7 @@ const ipAddressRestrictions = defineModel<IIpAddressRestriction[]>('ipAddressRes
 })
 const searchText = ref<string>('')
 const filtered = ref()
-const addText = ref<string>('add')
+const submitType = ref<'add' | 'update'>('add')
 
 onMounted(() => {
   filtered.value = ipAddressRestrictions.value
@@ -48,7 +48,7 @@ const onSave = () => {
     return
   }
 
-  addText.value = 'add'
+  submitType.value = 'add'
 
   if (updateIndex.value >= 0) {
     // update collection
@@ -70,7 +70,7 @@ const onSave = () => {
 }
 
 const onUpdate = (ipAddressRestriction: IIpAddressRestriction) => {
-  addText.value = 'update'
+  submitType.value = 'update'
   ipAddressPlaceholder.value = ipAddressRestriction.address
   updateIndex.value = ipAddressRestrictions.value.indexOf(ipAddressRestriction)
   ipAddressInput.value = ipAddressRestriction.address
@@ -78,7 +78,7 @@ const onUpdate = (ipAddressRestriction: IIpAddressRestriction) => {
 }
 
 const onCancel = () => {
-  addText.value = 'add'
+  submitType.value = 'add'
   updateIndex.value = -1
   ipAddressInput.value = ''
 }
@@ -86,7 +86,7 @@ const onCancel = () => {
 const onDelete = (ipAddressRestriction: IIpAddressRestriction) => {
   for (const [index, iterator] of ipAddressRestrictions.value.entries()) {
     if (iterator.id === ipAddressRestriction.id) {
-      addText.value = 'add'
+      submitType.value = 'add'
       searchText.value = ''
       updateIndex.value = -1
       ipAddressInput.value = ''
@@ -145,10 +145,10 @@ const onDelete = (ipAddressRestriction: IIpAddressRestriction) => {
         <template #suffix>
           <div class="flex gap-1">
             <base-button type="submit" color="primary" variant="filled" size="xs">
-              {{ addText }}
+              {{ submitType === 'add' ? 'add' : 'update' }}
             </base-button>
             <base-button
-              v-if="addText === 'update'"
+              v-if="submitType === 'update'"
               @click="onCancel()"
               type="button"
               color="danger"

@@ -28,6 +28,7 @@ const toggleApiKeyModal = (value: boolean) => {
   showApiKeyModal.value = newValue
 }
 
+const generatedApiKey = ref()
 const onSave = async () => {
   // convert web restrictions array
   form.data.web_restrictions = webRestrictions.value.map(function (item) {
@@ -42,9 +43,9 @@ const onSave = async () => {
   try {
     const response = await axios.post('/v1/api-keys', form.data)
     if (response.status === 201) {
+      generatedApiKey.value = response.data.api_key
       toastRef.toast('Create success')
-      showApiKeyModal.value = true
-      router.push('/credentials/api-keys')
+      toggleApiKeyModal(true)
     }
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -56,13 +57,23 @@ const onSave = async () => {
           listErrors.push(formErrors[key])
         }
       }
-      console.log(listErrors)
       toastRef.toast(error.response?.data.message, {
         lists: listErrors.flat(),
         color: 'danger'
       })
     }
   }
+}
+
+const onCloseCreatedModal = () => {
+  toggleApiKeyModal(false)
+  router.push('/credentials/api-keys')
+}
+
+const tooltip = ref('copy')
+const onCopyApiKey = () => {
+  navigator.clipboard.writeText(generatedApiKey.value)
+  tooltip.value = 'copied!'
 }
 </script>
 
@@ -86,17 +97,23 @@ const onSave = async () => {
     </base-card>
 
     <!-- success confirmation, and inform user to save the api key -->
-    <base-modal :is-open="showApiKeyModal" @on-close="toggleApiKeyModal(false)">
+    <base-modal :is-open="showApiKeyModal" @on-close="onCloseCreatedModal()">
       <div class="max-h-90vh overflow-auto p-4">
-        <h2 class="py-4 text-2xl font-bold">Regenerate API Key</h2>
+        <h2 class="py-4 text-2xl font-bold">API Key created</h2>
         <div class="space-y-8">
-          <p>
-            Are you sure you want to regenerate this API Key? Any applications or scripts using this
-            API Key will no longer be able to access the Auth API. You cannot undo this action.
-          </p>
+          <p>Make sure to copy your API Key now. You won't be able to see it again!</p>
+          <div class="flex flex-col gap-2">
+            <span class="font-semibold">Your API Key</span>
+            <div class="w-full border border-black flex items-center gap-2 py-2">
+              <base-button size="sm" v-tooltip="tooltip" @click="onCopyApiKey">
+                <base-icon icon="i-far-copy"></base-icon>
+              </base-button>
+              <div>{{ generatedApiKey }}</div>
+            </div>
+          </div>
           <div class="flex gap-2">
             <base-button color="primary" size="sm" @click="toggleApiKeyModal(false)">
-              I Understand, Regenerate this API Key.
+              Close
             </base-button>
           </div>
         </div>

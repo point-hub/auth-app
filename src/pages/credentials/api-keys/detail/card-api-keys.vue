@@ -6,6 +6,7 @@ import axios from '@/axios'
 const formId = defineModel('formId')
 const name = defineModel('name')
 const prefixApiKey = defineModel('prefixApiKey')
+const emit = defineEmits(['regenerated'])
 
 // regenerate modal logic
 const showRegenerateModalInfo = ref(false)
@@ -25,6 +26,7 @@ const onRegenerate = async () => {
   // start api call
   const response = await axios.patch(`/v1/api-keys/${formId.value}/regenerate`)
   if (response.status === 200) {
+    emit('regenerated', response.data.api_key)
     prefixApiKey.value = response.data.prefix_api_key
     toggleRegenerateModalInfo(false)
   }

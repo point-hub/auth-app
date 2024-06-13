@@ -73,7 +73,11 @@ const onRegenerate = async () => {
                   >
                     I Understand, Regenerate this API Key.
                   </base-button>
-                  <base-button color="danger" size="sm" @click="toggleRegenerateModalInfo(false)">
+                  <base-button
+                    color="secondary"
+                    size="sm"
+                    @click="toggleRegenerateModalInfo(false)"
+                  >
                     Cancel
                   </base-button>
                 </div>

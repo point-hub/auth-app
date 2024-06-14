@@ -12,7 +12,8 @@ export const apps: IApps[] = [
         name: 'Credentials',
         submenu: [
           { name: 'API Keys', path: '/credentials/api-keys' },
-          { name: 'OAuth 2.0', path: '/credentials/oauth2' }
+          { name: 'OAuth 2.0', path: '/credentials/oauth2' },
+          { name: 'OAuth Consent Screen', path: '/credentials/oauth-consent-screen' }
         ]
       }
     ]

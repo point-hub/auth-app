@@ -43,6 +43,15 @@ export default {
           component: () => import('@/pages/credentials/oauth2/update/index.vue')
         }
       ]
+    },
+    {
+      path: 'oauth-consent-screen',
+      children: [
+        {
+          path: '',
+          component: () => import('@/pages/credentials/oauth-consent-screen/index.vue')
+        }
+      ]
     }
   ]
 }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { error } from 'console'
 import { v4 as uuidv4 } from 'uuid'
 import { onMounted, ref, watch } from 'vue'
 

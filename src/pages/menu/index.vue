@@ -31,11 +31,11 @@ const links = [
       </base-breadcrumb>
     </base-card>
 
-    <div class="grid cols-1 sm:cols-2 lg:cols-3 xl:cols-4 gap-4">
+    <div class="grid cols-1 lg:cols-2 xl:cols-3 gap-4">
       <base-button size="none" v-for="link in links" :key="link">
         <router-link :to="link.path" class="w-full">
           <base-card class="p-3! h-32">
-            <template #header>{{ link.name }}</template>
+            <h2 class="line-clamp-1">{{ link.name }}</h2>
             <p class="line-clamp-3 text-sm">{{ link.description }}</p>
           </base-card>
         </router-link>

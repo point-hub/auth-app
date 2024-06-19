@@ -1,47 +1,26 @@
 <script setup lang="ts">
+import AppMenu from '@/components/app-menu.vue'
+
 const breadcrumbs = [
   {
     name: 'Menu'
   }
 ]
 
-const links = [
+const menus = [
   {
     name: 'Home',
-    description: 'The main web page of this application',
-    path: '/home'
+    path: '/',
+    icon: 'i-far-house'
   },
   {
     name: 'Credentials',
-    description:
-      'Credentials is an authentication process about proving that you are who you say you are.',
-    path: '/credentials'
+    path: '/credentials',
+    icon: 'i-far-lock'
   }
 ]
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <base-card class="py-3!">
-      <base-breadcrumb :items="breadcrumbs" separator="angle" v-slot="{ item }">
-        <router-link v-if="item.path" :to="item.path">
-          {{ item.name }}
-        </router-link>
-        <span v-else>{{ item.name }}</span>
-      </base-breadcrumb>
-    </base-card>
-
-    <div class="grid cols-1 lg:cols-2 xl:cols-3 gap-4">
-      <base-button size="none" v-for="link in links" :key="link">
-        <router-link :to="link.path" class="w-full">
-          <base-card class="p-3! h-32">
-            <h2 class="line-clamp-1">{{ link.name }}</h2>
-            <p class="line-clamp-3 text-sm">{{ link.description }}</p>
-          </base-card>
-        </router-link>
-      </base-button>
-    </div>
-  </div>
+  <app-menu :breadcrumbs="breadcrumbs" :menus="menus" />
 </template>
-
-<style scoped lang="postcss"></style>

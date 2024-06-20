@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppBreadcrumb from '@/components/app-breadcrumb.vue'
+
 interface IProps {
   breadcrumbs: { name: string; path?: string }[]
   menus: { name: string; icon: string; path: string }[]
@@ -9,14 +11,7 @@ const props = defineProps<IProps>()
 
 <template>
   <div class="flex flex-col gap-4">
-    <base-card class="py-3!">
-      <base-breadcrumb :items="props.breadcrumbs" separator="angle" v-slot="{ item }">
-        <router-link v-if="item.path" :to="item.path">
-          {{ item.name }}
-        </router-link>
-        <span v-else>{{ item.name }}</span>
-      </base-breadcrumb>
-    </base-card>
+    <app-breadcrumb :breadcrumbs="breadcrumbs" />
 
     <div class="grid cols-1 sm:cols-2 lg:cols-3 xl:cols-4 gap-4">
       <base-button size="none" v-for="menu in props.menus" :key="menu" class="w-full h-full">

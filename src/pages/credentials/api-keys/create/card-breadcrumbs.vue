@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppBreadcrumb from '@/components/app-breadcrumb.vue'
+
 const breadcrumbs = [
   {
     name: 'Menu',
@@ -19,12 +21,5 @@ const breadcrumbs = [
 </script>
 
 <template>
-  <base-card class="py-3!">
-    <base-breadcrumb :items="breadcrumbs" separator="angle" v-slot="{ item }">
-      <router-link v-if="item.path" :to="item.path">
-        {{ item.name }}
-      </router-link>
-      <span v-else>{{ item.name }}</span>
-    </base-breadcrumb>
-  </base-card>
+  <app-breadcrumb :breadcrumbs="breadcrumbs" />
 </template>

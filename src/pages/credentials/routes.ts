@@ -23,24 +23,19 @@ export default {
       ]
     },
     {
-      path: 'oauth2',
+      path: 'oauth2s',
       children: [
         {
           path: '',
-          component: () => import('@/pages/credentials/oauth2/list/index.vue')
+          component: () => import('@/pages/credentials/oauth2s/list/index.vue')
         },
         {
           path: 'create',
-          component: () => import('@/pages/credentials/oauth2/create/index.vue')
+          component: () => import('@/pages/credentials/oauth2s/create/index.vue')
         },
         {
           path: ':id',
-          component: () => import('@/pages/credentials/oauth2/create/index.vue')
-        },
-
-        {
-          path: ':id/update',
-          component: () => import('@/pages/credentials/oauth2/update/index.vue')
+          component: () => import('@/pages/credentials/oauth2s/create/index.vue')
         }
       ]
     },

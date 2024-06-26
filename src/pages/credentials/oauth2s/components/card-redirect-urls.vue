@@ -4,42 +4,44 @@ import { onMounted, ref, watch } from 'vue'
 
 import { useToastStore } from '@/stores/toast-store'
 
-import type { IWebRestriction } from '../types'
-import WebRestrictionExample from './web-restrictions-example.vue'
+import type { IRedirectUrl } from '../types'
+import UrlExample from './url-example.vue'
 
 const { toastRef } = useToastStore()
 const updateIndex = ref(-1)
-const webRestrictionInput = ref<string>('')
-const webRestrictionPlaceholder = ref<string>('')
-const webRestrictionInputRef = ref()
-const webRestrictions = defineModel<IWebRestriction[]>('webRestrictions', { required: true })
+const redirectUrlInput = ref<string>('')
+const redirectUrlPlaceholder = ref<string>('')
+const redirectUrlInputRef = ref()
+const redirectUrls = defineModel<IRedirectUrl[]>('redirectUrls', {
+  required: true
+})
 const searchText = ref<string>('')
 const filtered = ref()
 const submitType = ref<'add' | 'update'>('add')
 
 onMounted(() => {
-  filtered.value = webRestrictions.value
+  filtered.value = redirectUrls.value
 })
 
-watch(webRestrictions.value, () => {
-  filtered.value = webRestrictions.value
+watch(redirectUrls.value, () => {
+  filtered.value = redirectUrls.value
 })
 
 const onSearch = () => {
-  filtered.value = webRestrictions.value.filter((el: IWebRestriction) => {
+  filtered.value = redirectUrls.value.filter((el: IRedirectUrl) => {
     return el.url.includes(searchText.value)
   })
 }
 
 const onSave = () => {
-  for (const webRestriction of webRestrictions.value) {
-    if (webRestriction.url === webRestrictionInput.value) {
-      toastRef.toast(`URL "${webRestriction.url}" is exists`, { color: 'danger' })
+  for (const redirectUrl of redirectUrls.value) {
+    if (redirectUrl.url === redirectUrlInput.value) {
+      toastRef.toast(`Url "${redirectUrl.url}" is exists`, { color: 'danger' })
       return
     }
   }
 
-  if (!webRestrictionInput.value) {
+  if (!redirectUrlInput.value) {
     toastRef.toast(`URL is required`, { color: 'danger' })
     return
   }
@@ -48,46 +50,46 @@ const onSave = () => {
 
   if (updateIndex.value >= 0) {
     // update collection
-    webRestrictions.value[updateIndex.value].url = webRestrictionInput.value
+    redirectUrls.value[updateIndex.value].url = redirectUrlInput.value
     updateIndex.value = -1
   } else {
     // add new collection
-    webRestrictions.value.push({
+    redirectUrls.value.push({
       id: uuidv4(),
-      url: webRestrictionInput.value
+      url: redirectUrlInput.value
     })
   }
 
   // reset input text
-  webRestrictionInput.value = ''
+  redirectUrlInput.value = ''
 
   // reset search text
   searchText.value = ''
 }
 
-const onUpdate = (webRestriction: IWebRestriction) => {
+const onUpdate = (redirectUrl: IRedirectUrl) => {
   submitType.value = 'update'
-  webRestrictionPlaceholder.value = webRestriction.url
-  updateIndex.value = webRestrictions.value.indexOf(webRestriction)
-  webRestrictionInput.value = webRestriction.url
-  webRestrictionInputRef.value.inputRef.focus()
+  redirectUrlPlaceholder.value = redirectUrl.url
+  updateIndex.value = redirectUrls.value.indexOf(redirectUrl)
+  redirectUrlInput.value = redirectUrl.url
+  redirectUrlInputRef.value.inputRef.focus()
 }
 
 const onCancel = () => {
   submitType.value = 'add'
   updateIndex.value = -1
-  webRestrictionInput.value = ''
+  redirectUrlInput.value = ''
 }
 
-const onDelete = (webRestriction: IWebRestriction) => {
-  for (const [index, iterator] of webRestrictions.value.entries()) {
-    if (iterator.id === webRestriction.id) {
+const onDelete = (redirectUrl: IRedirectUrl) => {
+  for (const [index, iterator] of redirectUrls.value.entries()) {
+    if (iterator.id === redirectUrl.id) {
       submitType.value = 'add'
       searchText.value = ''
       updateIndex.value = -1
-      webRestrictionInput.value = ''
-      webRestrictionInputRef.value.inputRef.focus()
-      webRestrictions.value.splice(index, 1)
+      redirectUrlInput.value = ''
+      redirectUrlInputRef.value.inputRef.focus()
+      redirectUrls.value.splice(index, 1)
       break
     }
   }
@@ -96,22 +98,21 @@ const onDelete = (webRestriction: IWebRestriction) => {
 
 <template>
   <base-card>
-    <template #header>Website restrictions</template>
+    <template #header>Javascript redirect urls</template>
     <p>
-      Restrict key usage requests to the specified websites. Here are some examples of URLs that you
-      can allow to set up a website:
+      Specify one or more IP urles of the callers that are allowed to use your API key. Format as an
+      IPv4. Examples: 192.168.0.1
     </p>
     <div class="flex flex-wrap gap-10 mt-5">
       <div>
-        <WebRestrictionExample></WebRestrictionExample>
+        <url-example />
       </div>
       <div class="flex-1">
-        <base-table v-if="webRestrictions.length">
+        <base-table v-if="redirectUrls.length">
           <thead>
             <tr>
               <th>
                 <base-input
-                  ref="searchRef"
                   border="none"
                   placeholder="Search"
                   v-model="searchText"
@@ -127,14 +128,14 @@ const onDelete = (webRestriction: IWebRestriction) => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="webRestriction in filtered" :key="webRestriction.id">
-              <td>{{ webRestriction.url }}</td>
+            <tr v-for="redirectUrl in filtered" :key="redirectUrl">
+              <td>{{ redirectUrl.url }}</td>
               <td>
                 <div class="flex">
-                  <base-button size="sm" v-tooltip="'edit'" @click="onUpdate(webRestriction)">
+                  <base-button size="sm" v-tooltip="'edit'" @click="onUpdate(redirectUrl)">
                     <base-icon icon="i-fad-pencil"></base-icon>
                   </base-button>
-                  <base-button size="sm" v-tooltip="'delete'" @click="onDelete(webRestriction)">
+                  <base-button size="sm" v-tooltip="'delete'" @click="onDelete(redirectUrl)">
                     <base-icon icon="i-fad-trash"></base-icon>
                   </base-button>
                 </div>
@@ -144,11 +145,11 @@ const onDelete = (webRestriction: IWebRestriction) => {
         </base-table>
         <form class="flex flex-col gap-4 mt-5" @submit.prevent="onSave">
           <base-input
-            ref="webRestrictionInputRef"
+            v-model="redirectUrlInput"
             type="url"
+            ref="redirectUrlInputRef"
             required
-            v-model="webRestrictionInput"
-            label="Website URL"
+            label="Redirect url"
           >
             <template #suffix>
               <div class="flex gap-1">

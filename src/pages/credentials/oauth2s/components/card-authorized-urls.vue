@@ -4,42 +4,44 @@ import { onMounted, ref, watch } from 'vue'
 
 import { useToastStore } from '@/stores/toast-store'
 
-import type { IWebRestriction } from '../types'
-import WebRestrictionExample from './web-restrictions-example.vue'
+import type { IAuthorizedUrl } from '../types'
+import UrlExample from './url-example.vue'
 
 const { toastRef } = useToastStore()
 const updateIndex = ref(-1)
-const webRestrictionInput = ref<string>('')
-const webRestrictionPlaceholder = ref<string>('')
-const webRestrictionInputRef = ref()
-const webRestrictions = defineModel<IWebRestriction[]>('webRestrictions', { required: true })
+const authorizedUrlInput = ref<string>('')
+const authorizedUrlPlaceholder = ref<string>('')
+const authorizedUrlInputRef = ref()
+const authorizedUrls = defineModel<IAuthorizedUrl[]>('authorizedUrls', {
+  required: true
+})
 const searchText = ref<string>('')
 const filtered = ref()
 const submitType = ref<'add' | 'update'>('add')
 
 onMounted(() => {
-  filtered.value = webRestrictions.value
+  filtered.value = authorizedUrls.value
 })
 
-watch(webRestrictions.value, () => {
-  filtered.value = webRestrictions.value
+watch(authorizedUrls.value, () => {
+  filtered.value = authorizedUrls.value
 })
 
 const onSearch = () => {
-  filtered.value = webRestrictions.value.filter((el: IWebRestriction) => {
+  filtered.value = authorizedUrls.value.filter((el: IAuthorizedUrl) => {
     return el.url.includes(searchText.value)
   })
 }
 
 const onSave = () => {
-  for (const webRestriction of webRestrictions.value) {
-    if (webRestriction.url === webRestrictionInput.value) {
-      toastRef.toast(`URL "${webRestriction.url}" is exists`, { color: 'danger' })
+  for (const authorizedUrl of authorizedUrls.value) {
+    if (authorizedUrl.url === authorizedUrlInput.value) {
+      toastRef.toast(`URL "${authorizedUrl.url}" is exists`, { color: 'danger' })
       return
     }
   }
 
-  if (!webRestrictionInput.value) {
+  if (!authorizedUrlInput.value) {
     toastRef.toast(`URL is required`, { color: 'danger' })
     return
   }
@@ -48,46 +50,46 @@ const onSave = () => {
 
   if (updateIndex.value >= 0) {
     // update collection
-    webRestrictions.value[updateIndex.value].url = webRestrictionInput.value
+    authorizedUrls.value[updateIndex.value].url = authorizedUrlInput.value
     updateIndex.value = -1
   } else {
     // add new collection
-    webRestrictions.value.push({
+    authorizedUrls.value.push({
       id: uuidv4(),
-      url: webRestrictionInput.value
+      url: authorizedUrlInput.value
     })
   }
 
   // reset input text
-  webRestrictionInput.value = ''
+  authorizedUrlInput.value = ''
 
   // reset search text
   searchText.value = ''
 }
 
-const onUpdate = (webRestriction: IWebRestriction) => {
+const onUpdate = (authorizedUrl: IAuthorizedUrl) => {
   submitType.value = 'update'
-  webRestrictionPlaceholder.value = webRestriction.url
-  updateIndex.value = webRestrictions.value.indexOf(webRestriction)
-  webRestrictionInput.value = webRestriction.url
-  webRestrictionInputRef.value.inputRef.focus()
+  authorizedUrlPlaceholder.value = authorizedUrl.url
+  updateIndex.value = authorizedUrls.value.indexOf(authorizedUrl)
+  authorizedUrlInput.value = authorizedUrl.url
+  authorizedUrlInputRef.value.inputRef.focus()
 }
 
 const onCancel = () => {
   submitType.value = 'add'
   updateIndex.value = -1
-  webRestrictionInput.value = ''
+  authorizedUrlInput.value = ''
 }
 
-const onDelete = (webRestriction: IWebRestriction) => {
-  for (const [index, iterator] of webRestrictions.value.entries()) {
-    if (iterator.id === webRestriction.id) {
+const onDelete = (authorizedUrl: IAuthorizedUrl) => {
+  for (const [index, iterator] of authorizedUrls.value.entries()) {
+    if (iterator.id === authorizedUrl.id) {
       submitType.value = 'add'
       searchText.value = ''
       updateIndex.value = -1
-      webRestrictionInput.value = ''
-      webRestrictionInputRef.value.inputRef.focus()
-      webRestrictions.value.splice(index, 1)
+      authorizedUrlInput.value = ''
+      authorizedUrlInputRef.value.inputRef.focus()
+      authorizedUrls.value.splice(index, 1)
       break
     }
   }
@@ -96,17 +98,17 @@ const onDelete = (webRestriction: IWebRestriction) => {
 
 <template>
   <base-card>
-    <template #header>Website restrictions</template>
+    <template #header>Authorized javascript origins</template>
     <p>
-      Restrict key usage requests to the specified websites. Here are some examples of URLs that you
-      can allow to set up a website:
+      The HTTP origins that host your web application. This value can't contain wildcards or paths.
+      If you use a port other than 80, you must specify it.
     </p>
     <div class="flex flex-wrap gap-10 mt-5">
       <div>
-        <WebRestrictionExample></WebRestrictionExample>
+        <url-example />
       </div>
       <div class="flex-1">
-        <base-table v-if="webRestrictions.length">
+        <base-table v-if="authorizedUrls.length">
           <thead>
             <tr>
               <th>
@@ -127,14 +129,14 @@ const onDelete = (webRestriction: IWebRestriction) => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="webRestriction in filtered" :key="webRestriction.id">
-              <td>{{ webRestriction.url }}</td>
+            <tr v-for="authorizedUrl in filtered" :key="authorizedUrl.id">
+              <td>{{ authorizedUrl.url }}</td>
               <td>
                 <div class="flex">
-                  <base-button size="sm" v-tooltip="'edit'" @click="onUpdate(webRestriction)">
+                  <base-button size="sm" v-tooltip="'edit'" @click="onUpdate(authorizedUrl)">
                     <base-icon icon="i-fad-pencil"></base-icon>
                   </base-button>
-                  <base-button size="sm" v-tooltip="'delete'" @click="onDelete(webRestriction)">
+                  <base-button size="sm" v-tooltip="'delete'" @click="onDelete(authorizedUrl)">
                     <base-icon icon="i-fad-trash"></base-icon>
                   </base-button>
                 </div>
@@ -144,11 +146,11 @@ const onDelete = (webRestriction: IWebRestriction) => {
         </base-table>
         <form class="flex flex-col gap-4 mt-5" @submit.prevent="onSave">
           <base-input
-            ref="webRestrictionInputRef"
+            ref="authorizedUrlInputRef"
             type="url"
             required
-            v-model="webRestrictionInput"
-            label="Website URL"
+            v-model="authorizedUrlInput"
+            label="Authorized url"
           >
             <template #suffix>
               <div class="flex gap-1">

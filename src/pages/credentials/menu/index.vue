@@ -19,7 +19,7 @@ const menus = [
   },
   {
     name: 'OAuth 2.0',
-    path: '/credentials/oauth2',
+    path: '/credentials/oauth2s',
     icon: 'i-far-user-shield'
   },
   {

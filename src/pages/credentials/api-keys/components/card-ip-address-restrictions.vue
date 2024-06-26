@@ -4,10 +4,7 @@ import { onMounted, ref, watch } from 'vue'
 
 import { useToastStore } from '@/stores/toast-store'
 
-interface IIpAddressRestriction {
-  id: string
-  address: string
-}
+import type { IIpAddressRestriction } from '../types'
 
 const { toastRef } = useToastStore()
 const updateIndex = ref(-1)

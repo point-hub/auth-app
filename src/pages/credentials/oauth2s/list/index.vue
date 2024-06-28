@@ -16,6 +16,7 @@ const deleteModalRef = ref()
 
 interface IOauth2 {
   _id: string
+  application_type: string
   name: string
   created_date: string
   client_id: string
@@ -23,10 +24,11 @@ interface IOauth2 {
 }
 const searchAll = ref('')
 const search = ref({
+  applicationType: '',
   name: '',
   createdDate: '',
-  client_id: '',
-  client_secret: ''
+  clientId: '',
+  clientSecret: ''
 })
 const isLoading = ref(false)
 
@@ -38,14 +40,14 @@ watchDebounced(
     pagination.value.page = 1
     // update url query params
     router.push({
-      path: '/credentials/oauth2',
+      path: '/credentials/oauth2s',
       query: {
         search: searchAll.value,
         page: pagination.value.page
       }
     })
     // call api
-    await getApiKeys()
+    await getOAuth2s()
     isLoading.value = false
   },
   { debounce: 500, maxWait: 1000 }
@@ -66,7 +68,7 @@ watchDebounced(
       }
     })
     // call api
-    await getApiKeys()
+    await getOAuth2s()
     isLoading.value = false
   },
   { debounce: 500, maxWait: 1000 }
@@ -81,10 +83,10 @@ const updateData = async () => {
       page: pagination.value.page
     }
   })
-  await getApiKeys()
+  await getOAuth2s()
 }
 
-const getApiKeys = async () => {
+const getOAuth2s = async () => {
   const date = search.value.createdDate.split('-')
   const response = await axios.get('/v1/oauth2s', {
     params: {
@@ -112,7 +114,7 @@ const pagination = ref({
 onMounted(async () => {
   searchAll.value = route.query.search?.toString() ?? ''
   pagination.value.page = Number(route.query.page ?? 1)
-  await getApiKeys()
+  await getOAuth2s()
 })
 const openMenu = (oauth2: IOauth2, index: number) => {
   rowMenuRef.value[index].toggle(false)
@@ -122,7 +124,7 @@ const openMenu = (oauth2: IOauth2, index: number) => {
   })
 }
 const onDelete = async () => {
-  await getApiKeys()
+  await getOAuth2s()
 }
 </script>
 
@@ -133,7 +135,7 @@ const onDelete = async () => {
       <template #header>OAuth2</template>
       <p>Request user consent so your app can access the user's data.</p>
       <div class="my-5 flex gap-2">
-        <router-link to="/credentials/oauth2/create">
+        <router-link to="/credentials/oauth2s/create">
           <base-button color="primary" shape="sharp">Create</base-button>
         </router-link>
         <base-input v-model="searchAll" placeholder="Search..." border="full" class="w-full" />
@@ -145,7 +147,8 @@ const onDelete = async () => {
               <th class="w-1"></th>
               <th>Name</th>
               <th>Created Date</th>
-              <th>Api Key</th>
+              <th>Type</th>
+              <th>Client Id</th>
             </tr>
             <tr class="bg-slate-50 dark:bg-slate-700">
               <th></th>
@@ -158,10 +161,13 @@ const onDelete = async () => {
               <th class="basic-table-head">
                 <base-input
                   required
-                  v-model="search.client_id"
+                  v-model="search.applicationType"
                   placeholder="Search"
                   border="none"
                 />
+              </th>
+              <th class="basic-table-head">
+                <base-input required v-model="search.clientId" placeholder="Search" border="none" />
               </th>
               <th></th>
             </tr>
@@ -184,7 +190,7 @@ const onDelete = async () => {
                     <template #content>
                       <base-card class="py-1! px-2! text-sm">
                         <div class="flex flex-col">
-                          <router-link :to="`/credentials/oauth2/${oauth2._id}`">
+                          <router-link :to="`/credentials/oauth2s/${oauth2._id}`">
                             <base-button variant="text" color="info">
                               <div class="flex gap-2 w-full">
                                 <base-icon class="text-xl" icon="i-ph-pencil"></base-icon>
@@ -209,12 +215,13 @@ const onDelete = async () => {
                   </base-popover>
                 </td>
                 <td>
-                  <router-link :to="`/credentials/oauth2/${oauth2._id}`" class="text-blue">
+                  <router-link :to="`/credentials/oauth2s/${oauth2._id}`" class="text-blue">
                     {{ oauth2.name }}
                   </router-link>
                 </td>
                 <td>{{ formatDate(new Date(oauth2.created_date), 'dd-MM-yyyy') }}</td>
-                <td>{{ oauth2.client_id }}...</td>
+                <td>{{ oauth2.application_type }}</td>
+                <td>{{ oauth2.client_id.substring(0, 8) }}...</td>
               </tr>
             </template>
           </tbody>

@@ -3,28 +3,28 @@ import { ref, watch } from 'vue'
 export interface IForm {
   [key: string]: any
   name: string
-  web_restrictions: string[]
-  ip_address_restrictions: string[]
+  authorized_urls: string[]
+  redirect_urls: string[]
 }
 
 export interface IFormError {
   [key: string]: string[]
   name: string[]
-  web_restrictions: string[]
-  ip_address_restrictions: string[]
+  authorized_urls: string[]
+  redirect_urls: string[]
 }
 
 export function useForm() {
   const defaultForm: IForm = {
     name: '',
-    web_restrictions: [],
-    ip_address_restrictions: []
+    authorized_urls: [],
+    redirect_urls: []
   }
 
   const defaultFormError: IFormError = {
     name: [],
-    web_restrictions: [],
-    ip_address_restrictions: []
+    authorized_urls: [],
+    redirect_urls: []
   }
 
   const data = ref<IForm>(defaultForm)

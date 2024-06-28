@@ -6,11 +6,11 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '@/axios'
 import { useToastStore } from '@/stores/toast-store'
 
-import CardIpAddressRestrictions from '../components/card-redirect-urls.vue'
-import CardWebRestrictions from '../components/card-authorized-urls.vue'
+import CardApplication from '../components/card-application.vue'
+import CardAuthorizedUrls from '../components/card-authorized-urls.vue'
+import CardRedirectUrls from '../components/card-redirect-urls.vue'
 import DeleteModal from '../components/delete-modal.vue'
-import type { IIpAddressRestriction, IWebRestriction } from '../types'
-import CardApiKeys from './card-api-keys.vue'
+import type { IAuthorizedUrl, IRedirectUrl } from '../types'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 import { useForm } from './form'
 
@@ -22,57 +22,57 @@ const deleteModalRef = ref()
 const form = reactive(useForm())
 
 const formId = ref()
-const prefixApiKey = ref()
+const prefixClientSecret = ref()
 const apiKeyResponse = ref()
-const webRestrictions = ref<IWebRestriction[]>([])
-const ipAddressRestrictions = ref<IIpAddressRestriction[]>([])
+const authorizedUrls = ref<IAuthorizedUrl[]>([])
+const redirectUrls = ref<IRedirectUrl[]>([])
 
 onMounted(async () => {
-  apiKeyResponse.value = (await axios.get(`/v1/api-keys/${route.params.id}`)).data
+  apiKeyResponse.value = (await axios.get(`/v1/oauth2s/${route.params.id}`)).data
   formId.value = apiKeyResponse.value._id
   form.data.name = apiKeyResponse.value.name
-  prefixApiKey.value = apiKeyResponse.value.prefix_api_key
+  prefixClientSecret.value = apiKeyResponse.value.prefix_client_secret
 
-  for (const iterator of apiKeyResponse.value.web_restrictions ?? []) {
-    webRestrictions.value.push({
+  for (const iterator of apiKeyResponse.value.authorized_urls ?? []) {
+    authorizedUrls.value.push({
       id: uuidv4(),
       url: iterator
     })
   }
 
-  for (const iterator of apiKeyResponse.value.ip_address_restrictions ?? []) {
-    ipAddressRestrictions.value.push({
+  for (const iterator of apiKeyResponse.value.redirect_urls ?? []) {
+    redirectUrls.value.push({
       id: uuidv4(),
-      address: iterator
+      url: iterator
     })
   }
 })
 
-const generatedApiKey = ref()
+const generatedClientSecret = ref()
 const onUpdate = async () => {
   // convert web restrictions array
-  form.data.web_restrictions = webRestrictions.value.map(function (item) {
+  form.data.authorized_urls = authorizedUrls.value.map(function (item) {
     return item['url']
   })
 
-  // convert ip address restrictions array
-  form.data.ip_address_restrictions = ipAddressRestrictions.value.map(function (item) {
-    return item['address']
+  // convert ip url restrictions array
+  form.data.redirect_urls = redirectUrls.value.map(function (item) {
+    return item['url']
   })
 
-  const response = await axios.patch(`/v1/api-keys/${route.params.id}`, form.data)
+  const response = await axios.patch(`/v1/oauth2s/${route.params.id}`, form.data)
   if (response.status === 200) {
     toastRef.toast('Update success')
-    router.push('/credentials/api-keys')
+    router.push('/credentials/oauth2s')
   }
 }
 
-const showApiKeyModal = ref(false)
+const showGeneratedInfo = ref(false)
 const toggleApiKeyModal = (value: boolean) => {
-  let newValue = !showApiKeyModal.value
+  let newValue = !showGeneratedInfo.value
   if (value === true) newValue = true
   if (value === false) newValue = false
-  showApiKeyModal.value = newValue
+  showGeneratedInfo.value = newValue
 }
 
 const onCloseRegeneratedModal = () => {
@@ -81,17 +81,17 @@ const onCloseRegeneratedModal = () => {
 
 const tooltip = ref('copy')
 const onCopyApiKey = () => {
-  navigator.clipboard.writeText(generatedApiKey.value)
+  navigator.clipboard.writeText(generatedClientSecret.value)
   tooltip.value = 'copied!'
 }
 
 // regenerate modal logic
 const onDeleted = async () => {
-  router.push('/credentials/api-keys')
+  router.push('/credentials/oauth2s')
 }
 
 const onRegenerated = (apiKey: string) => {
-  generatedApiKey.value = apiKey
+  generatedClientSecret.value = apiKey
   toggleApiKeyModal(true)
 }
 </script>
@@ -100,16 +100,11 @@ const onRegenerated = (apiKey: string) => {
   <div class="flex flex-col gap-4">
     <card-breadcrumbs :id="route.params.id.toString()" />
 
-    <card-api-keys
-      v-model:name="form.data.name"
-      v-model:prefixApiKey="prefixApiKey"
-      :form-id="route.params.id.toString()"
-      @regenerated="onRegenerated"
-    />
+    <card-application v-model:name="form.data.name" :errors="form.errors" />
 
-    <card-web-restrictions v-model:webRestrictions="webRestrictions" />
+    <card-authorized-urls v-model:authorizedUrls="authorizedUrls" />
 
-    <card-ip-address-restrictions v-model:ipAddressRestrictions="ipAddressRestrictions" />
+    <card-redirect-urls v-model:redirectUrls="redirectUrls" />
 
     <base-card>
       <div class="flex gap-2">
@@ -129,18 +124,18 @@ const onRegenerated = (apiKey: string) => {
     </base-card>
 
     <!-- success confirmation, and inform user to save the api key -->
-    <base-modal :is-open="showApiKeyModal" @on-close="onCloseRegeneratedModal()">
+    <base-modal :is-open="showGeneratedInfo" @on-close="onCloseRegeneratedModal()">
       <div class="max-h-90vh overflow-auto p-4">
-        <h2 class="py-4 text-2xl font-bold">API Key updated</h2>
+        <h2 class="py-4 text-2xl font-bold">OAuth2 credential updated</h2>
         <div class="space-y-8">
-          <p>Make sure to copy your API Key now. You won't be able to see it again!</p>
+          <p>Make sure to copy your OAuth2 credential now. You won't be able to see it again!</p>
           <div class="flex flex-col gap-2">
-            <span class="font-semibold">Your API Key</span>
+            <span class="font-semibold">Your OAuth2 credential</span>
             <div class="w-full border border-black flex items-center gap-2 py-2">
               <base-button size="sm" v-tooltip="tooltip" @click="onCopyApiKey">
                 <base-icon icon="i-far-copy"></base-icon>
               </base-button>
-              <div>{{ generatedApiKey }}</div>
+              <div>{{ generatedClientSecret }}</div>
             </div>
           </div>
           <div class="flex gap-2">

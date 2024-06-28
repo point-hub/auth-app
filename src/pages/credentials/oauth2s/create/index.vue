@@ -6,10 +6,10 @@ import { useRouter } from 'vue-router'
 import axios from '@/axios'
 import { useToastStore } from '@/stores/toast-store'
 
+import CardApplication from '../components/card-application.vue'
 import CardAuthorizedUrls from '../components/card-authorized-urls.vue'
 import CardRedirectUrls from '../components/card-redirect-urls.vue'
 import type { IAuthorizedUrl, IRedirectUrl } from '../types'
-import CardApplication from './card-application.vue'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 import { useForm } from './form'
 
@@ -21,14 +21,16 @@ const authorizedUrls = ref<IAuthorizedUrl[]>([])
 const redirectUrls = ref<IRedirectUrl[]>([])
 
 const showApiKeyModal = ref(false)
-const toggleApiKeyModal = (value: boolean) => {
+const toggleCredentialInfo = (value: boolean) => {
   let newValue = !showApiKeyModal.value
   if (value === true) newValue = true
   if (value === false) newValue = false
   showApiKeyModal.value = newValue
 }
 
-const generatedApiKey = ref()
+const generatedClientId = ref()
+const generatedClientSecret = ref()
+
 const onSave = async () => {
   // convert web authorized javascript origins array
   form.data.authorized_javascript_origins = authorizedUrls.value.map(function (item) {
@@ -43,9 +45,10 @@ const onSave = async () => {
   try {
     const response = await axios.post('/v1/oauth2s', form.data)
     if (response.status === 201) {
-      generatedApiKey.value = response.data.api_key
+      generatedClientId.value = response.data.client_id
+      generatedClientSecret.value = response.data.client_secret
       toastRef.toast('Create success')
-      toggleApiKeyModal(true)
+      toggleCredentialInfo(true)
     }
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -66,14 +69,20 @@ const onSave = async () => {
 }
 
 const onCloseCreatedModal = () => {
-  toggleApiKeyModal(false)
-  router.push('/credentials/oauth2')
+  toggleCredentialInfo(false)
+  router.push('/credentials/oauth2s')
 }
 
-const tooltip = ref('copy')
-const onCopyApiKey = () => {
-  navigator.clipboard.writeText(generatedApiKey.value)
-  tooltip.value = 'copied!'
+const tooltipClientId = ref('copy')
+const onCopyClientId = () => {
+  navigator.clipboard.writeText(generatedClientId.value)
+  tooltipClientId.value = 'copied!'
+}
+
+const tooltipClientSecret = ref('copy')
+const onCopyClientSecret = () => {
+  navigator.clipboard.writeText(generatedClientSecret.value)
+  tooltipClientSecret.value = 'copied!'
 }
 </script>
 
@@ -99,20 +108,29 @@ const onCopyApiKey = () => {
     <!-- success confirmation, and inform user to save the api key -->
     <base-modal :is-open="showApiKeyModal" @on-close="onCloseCreatedModal()">
       <div class="max-h-90vh overflow-auto p-4">
-        <h2 class="py-4 text-2xl font-bold">API Key created</h2>
+        <h2 class="py-4 text-2xl font-bold">OAuth2 credential created</h2>
         <div class="space-y-8">
-          <p>Make sure to copy your API Key now. You won't be able to see it again!</p>
+          <p>Make sure to copy your client secret now. You won't be able to see it again!</p>
           <div class="flex flex-col gap-2">
-            <span class="font-semibold">Your API Key</span>
+            <span class="font-semibold">Client Id</span>
             <div class="w-full border border-black flex items-center gap-2 py-2">
-              <base-button size="sm" v-tooltip="tooltip" @click="onCopyApiKey">
+              <base-button size="sm" v-tooltip="tooltipClientId" @click="onCopyClientId">
                 <base-icon icon="i-far-copy"></base-icon>
               </base-button>
-              <div>{{ generatedApiKey }}</div>
+              <div>{{ generatedClientId }}</div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="font-semibold">Client Secret</span>
+            <div class="w-full border border-black flex items-center gap-2 py-2">
+              <base-button size="sm" v-tooltip="tooltipClientSecret" @click="onCopyClientSecret">
+                <base-icon icon="i-far-copy"></base-icon>
+              </base-button>
+              <div>{{ generatedClientSecret }}</div>
             </div>
           </div>
           <div class="flex gap-2">
-            <base-button color="primary" size="sm" @click="toggleApiKeyModal(false)">
+            <base-button color="primary" size="sm" @click="toggleCredentialInfo(false)">
               Close
             </base-button>
           </div>

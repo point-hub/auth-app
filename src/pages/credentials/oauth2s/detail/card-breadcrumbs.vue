@@ -14,7 +14,7 @@ const breadcrumbs = [
   },
   {
     name: 'OAuth2',
-    path: '/credentials/oauth2'
+    path: '/credentials/oauth2s'
   },
   {
     name: `${id.value}`

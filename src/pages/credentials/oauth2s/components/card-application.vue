@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
-import type { IFormError } from './form'
+import type { IFormError } from '../create/form'
 
 const type = defineModel<string>('type')
 const name = defineModel<string>('name')

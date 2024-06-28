@@ -34,10 +34,10 @@ const onDelete = async () => {
   // start loading state
   loadingState.value = true
   // start api call
-  const response = await axios.delete(`/v1/api-keys/${id.value}`)
+  const response = await axios.delete(`/v1/oauth2s/${id.value}`)
   if (response.status === 200) {
     emit('deleted')
-    toastRef.toast(`Delete API key "${name.value}" success`)
+    toastRef.toast(`Delete OAuth2 credential "${name.value}" success`)
     toggleModal(false)
   }
   // stop loading state
@@ -56,15 +56,15 @@ defineExpose({
 <template>
   <base-modal :is-open="showModal" @on-close="toggleModal(false)">
     <div class="max-h-90vh overflow-auto p-4">
-      <h2 class="py-4 text-2xl font-bold">Delete API Key</h2>
+      <h2 class="py-4 text-2xl font-bold">Delete OAuth2 credential</h2>
       <div class="space-y-8">
         <p>
-          Are you sure you want to delete this API Key? Any applications or scripts using this API
-          Key will no longer be able to access the Auth API. You cannot undo this action.
+          Are you sure you want to delete this credential? Any applications or scripts using this
+          credential will no longer be able to access the Auth API. You cannot undo this action.
         </p>
         <div class="flex gap-2">
           <base-button color="danger" size="sm" @click="onDelete()" :disabled="loadingState">
-            I Understand, Delete this API Key.
+            I Understand, Delete this credential.
           </base-button>
           <base-button color="secondary" size="sm" @click="toggleModal(false)">
             Cancel

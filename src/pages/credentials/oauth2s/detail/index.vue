@@ -6,11 +6,11 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '@/axios'
 import { useToastStore } from '@/stores/toast-store'
 
-import CardApplication from '../components/card-application.vue'
 import CardAuthorizedUrls from '../components/card-authorized-urls.vue'
 import CardRedirectUrls from '../components/card-redirect-urls.vue'
 import DeleteModal from '../components/delete-modal.vue'
 import type { IAuthorizedUrl, IRedirectUrl } from '../types'
+import CardApplication from './card-application.vue'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 import { useForm } from './form'
 
@@ -23,24 +23,26 @@ const form = reactive(useForm())
 
 const formId = ref()
 const prefixClientSecret = ref()
-const apiKeyResponse = ref()
+const oauth2Response = ref()
 const authorizedUrls = ref<IAuthorizedUrl[]>([])
 const redirectUrls = ref<IRedirectUrl[]>([])
 
 onMounted(async () => {
-  apiKeyResponse.value = (await axios.get(`/v1/oauth2s/${route.params.id}`)).data
-  formId.value = apiKeyResponse.value._id
-  form.data.name = apiKeyResponse.value.name
-  prefixClientSecret.value = apiKeyResponse.value.prefix_client_secret
+  oauth2Response.value = (await axios.get(`/v1/oauth2s/${route.params.id}`)).data
+  formId.value = oauth2Response.value._id
+  form.data.name = oauth2Response.value.name
+  form.data.authorized_urls = oauth2Response.value.authorized_urls
+  form.data.redirect_urls = oauth2Response.value.redirect_urls
+  prefixClientSecret.value = oauth2Response.value.prefix_client_secret
 
-  for (const iterator of apiKeyResponse.value.authorized_urls ?? []) {
+  for (const iterator of oauth2Response.value.authorized_urls ?? []) {
     authorizedUrls.value.push({
       id: uuidv4(),
       url: iterator
     })
   }
 
-  for (const iterator of apiKeyResponse.value.redirect_urls ?? []) {
+  for (const iterator of oauth2Response.value.redirect_urls ?? []) {
     redirectUrls.value.push({
       id: uuidv4(),
       url: iterator

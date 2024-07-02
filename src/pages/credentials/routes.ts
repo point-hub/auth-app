@@ -35,7 +35,7 @@ export default {
         },
         {
           path: ':id',
-          component: () => import('@/pages/credentials/oauth2s/create/index.vue')
+          component: () => import('@/pages/credentials/oauth2s/detail/index.vue')
         }
       ]
     },

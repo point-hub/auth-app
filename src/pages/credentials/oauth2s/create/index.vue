@@ -6,10 +6,10 @@ import { useRouter } from 'vue-router'
 import axios from '@/axios'
 import { useToastStore } from '@/stores/toast-store'
 
-import CardApplication from '../components/card-application.vue'
 import CardAuthorizedUrls from '../components/card-authorized-urls.vue'
 import CardRedirectUrls from '../components/card-redirect-urls.vue'
 import type { IAuthorizedUrl, IRedirectUrl } from '../types'
+import CardApplication from './card-application.vue'
 import CardBreadcrumbs from './card-breadcrumbs.vue'
 import { useForm } from './form'
 
@@ -32,13 +32,13 @@ const generatedClientId = ref()
 const generatedClientSecret = ref()
 
 const onSave = async () => {
-  // convert web authorized javascript origins array
-  form.data.authorized_javascript_origins = authorizedUrls.value.map(function (item) {
+  // convert authorized urls array
+  form.data.authorized_urls = authorizedUrls.value.map(function (item) {
     return item['url']
   })
 
-  // convert web authorized javascript urls array
-  form.data.authorized_javascript_urls = redirectUrls.value.map(function (item) {
+  // convert redirect urls array
+  form.data.redirect_urls = redirectUrls.value.map(function (item) {
     return item['url']
   })
 

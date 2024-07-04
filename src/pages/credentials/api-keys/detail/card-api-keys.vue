@@ -45,7 +45,7 @@ const onRegenerate = async () => {
     </p>
 
     <div class="flex flex-col gap-4 mt-5">
-      <base-input v-model="name" label="Name" />
+      <base-input required v-model="name" label="Name" />
       <base-form label="API Key">
         <div class="flex flex-wrap gap-4 w-full justify-between">
           <p>{{ prefixApiKey }}******************************</p>

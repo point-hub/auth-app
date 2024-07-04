@@ -15,7 +15,7 @@ const errors = defineModel<IFormError>('errors')
     </p>
 
     <div class="flex flex-col gap-4 mt-5">
-      <base-input v-model="name" label="Name" :errors="errors?.name" />
+      <base-input required v-model="name" label="Name" :errors="errors?.name" />
     </div>
   </base-card>
 </template>

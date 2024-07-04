@@ -162,7 +162,7 @@ const onDelete = (authorizedDomain: IWebRestriction) => {
             type="text"
             required
             v-model="authorizedDomainInput"
-            label="Website URL"
+            label="Domain"
             :errors="errors"
           >
             <template #suffix>

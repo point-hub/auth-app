@@ -14,18 +14,21 @@ const errors = defineModel<IFormError>('errors')
 
     <div class="flex flex-col gap-4 mt-5">
       <base-input
+        required
         v-model="name"
         label="App Name"
         :errors="errors?.name"
         :helpers="['The name of the app asking for consent']"
       />
       <base-input
+        required
         v-model="supportEmail"
         label="User support email"
         :errors="errors?.supportEmail"
         :helpers="['For users to contact you with questions about their consent']"
       />
       <base-input
+        required
         v-model="developerEmail"
         label="Developer email address"
         :errors="errors?.developerEmail"

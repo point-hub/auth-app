@@ -22,8 +22,9 @@ const deleteModalRef = ref()
 const form = reactive(useForm())
 
 const formId = ref()
-const prefixClientSecret = ref()
 const oauth2Response = ref()
+const clientId = ref()
+const prefixClientSecret = ref()
 const authorizedUrls = ref<IAuthorizedUrl[]>([])
 const redirectUrls = ref<IRedirectUrl[]>([])
 
@@ -33,6 +34,7 @@ onMounted(async () => {
   form.data.name = oauth2Response.value.name
   form.data.authorized_urls = oauth2Response.value.authorized_urls
   form.data.redirect_urls = oauth2Response.value.redirect_urls
+  clientId.value = oauth2Response.value.client_id
   prefixClientSecret.value = oauth2Response.value.prefix_client_secret
 
   for (const iterator of oauth2Response.value.authorized_urls ?? []) {
@@ -92,8 +94,8 @@ const onDeleted = async () => {
   router.push('/credentials/oauth2s')
 }
 
-const onRegenerated = (apiKey: string) => {
-  generatedClientSecret.value = apiKey
+const onRegenerated = (prefixClientSecret: string) => {
+  generatedClientSecret.value = prefixClientSecret
   toggleApiKeyModal(true)
 }
 </script>
@@ -102,7 +104,13 @@ const onRegenerated = (apiKey: string) => {
   <div class="flex flex-col gap-4">
     <card-breadcrumbs :id="route.params.id.toString()" />
 
-    <card-application v-model:name="form.data.name" :errors="form.errors" />
+    <card-application
+      v-model:name="form.data.name"
+      v-model:clientId="clientId"
+      v-model:prefixClientSecret="prefixClientSecret"
+      :form-id="route.params.id.toString()"
+      :errors="form.errors"
+    />
 
     <card-authorized-urls v-model:authorizedUrls="authorizedUrls" />
 

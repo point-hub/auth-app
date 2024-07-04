@@ -20,6 +20,7 @@ onMounted(() => {
     <div class="flex flex-col gap-4 mt-5">
       <base-form label="Application Type">Website</base-form>
       <base-input
+        required
         v-model="name"
         label="Name"
         :errors="errors?.name"

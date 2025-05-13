@@ -1,44 +1,24 @@
 import { computed, ref } from 'vue'
 
-import { useEmailValidation } from './validation'
-
 export interface IForm {
-  name: string
-  username: string
-  email: string
   password: string
   confirm_password: string
-  accept_terms: boolean
 }
 
 export interface IFormError {
-  name: string[]
-  username: string[]
-  email: string[]
   password: string[]
   confirm_password: string[]
-  accept_terms: string[]
 }
 
 export function useForm() {
-  const emailValidation = useEmailValidation()
-
   const defaultData: IForm = {
-    name: '',
-    username: '',
-    email: '',
     password: '',
-    confirm_password: '',
-    accept_terms: false
+    confirm_password: ''
   }
 
   const defaultErrors: IFormError = {
-    name: [],
-    username: [],
-    email: [],
     password: [],
-    confirm_password: [],
-    accept_terms: []
+    confirm_password: []
   }
 
   const data = ref<IForm>({ ...defaultData })
@@ -51,10 +31,12 @@ export function useForm() {
   }
 
   const isPasswordConfirmed = computed(() => {
+    confirmPasswordValidation()
     return (
       data.value.password.length > 0 &&
       data.value.confirm_password.length > 0 &&
-      errors.value.password.length === 0
+      errors.value.password.length === 0 &&
+      errors.value.confirm_password.length === 0
     )
   })
 
@@ -76,18 +58,6 @@ export function useForm() {
     }
     if (data.value.password.length < 8) {
       errorPassword.push('Use at least 8 characters')
-    }
-    if (!emailValidation.containsUppercase(data.value.password)) {
-      errorPassword.push('Contain at least one uppercase letter')
-    }
-    if (!emailValidation.containsLowercase(data.value.password)) {
-      errorPassword.push('Contain at least one lowercase letter')
-    }
-    if (!emailValidation.containsNumber(data.value.password)) {
-      errorPassword.push('Contain at least one numeric character')
-    }
-    if (!emailValidation.containsSpecialChars(data.value.password)) {
-      errorPassword.push('Contain at least one special character')
     }
     errors.value.password = errorPassword
   }

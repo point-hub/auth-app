@@ -59,12 +59,12 @@ const onSubmit = async () => {
   } catch (error) {
     const errorResponse = handleError(error)
     if (errorResponse.errors) {
-      form.errors.value = {
-        email: errorResponse.errors.email || [],
-        password: errorResponse.errors.password || [],
-        confirm_password: errorResponse.errors.confirm_password || [],
-        accept_terms: errorResponse.errors.accept_terms || []
-      }
+      form.errors.value.name = errorResponse.errors.name || []
+      form.errors.value.username = errorResponse.errors.username || []
+      form.errors.value.email = errorResponse.errors.email || []
+      form.errors.value.password = errorResponse.errors.password || []
+      form.errors.value.confirm_password = errorResponse.errors.confirm_password || []
+      form.errors.value.accept_terms = errorResponse.errors.accept_terms || []
     }
     if (errorResponse.message) {
       toastRef?.value.toast(errorResponse.message, {
@@ -81,6 +81,19 @@ const onSubmit = async () => {
     <form @submit.prevent="onSubmit" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
         <base-input
+          label="Name"
+          layout="vertical"
+          v-model="form.data.value.name"
+          :errors="form.errors.value.name"
+        />
+        <base-input
+          label="Username"
+          layout="vertical"
+          v-model="form.data.value.username"
+          :errors="form.errors.value.username"
+        />
+        <base-input
+          required
           label="Email"
           layout="vertical"
           v-model="form.data.value.email"
@@ -88,6 +101,7 @@ const onSubmit = async () => {
           @change="onEmailChange"
         />
         <base-input
+          required
           label="Password"
           layout="vertical"
           :type="password.type.value"
@@ -103,6 +117,7 @@ const onSubmit = async () => {
           </template>
         </base-input>
         <base-input
+          required
           label="Confirm Password"
           layout="vertical"
           :type="password.type.value"

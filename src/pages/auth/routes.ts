@@ -1,6 +1,5 @@
 export default {
   path: '/',
-  component: () => import('@/layouts/auth.vue'),
   children: [
     {
       path: '',

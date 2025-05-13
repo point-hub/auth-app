@@ -24,6 +24,9 @@ const instance = axios.create({
   timeout: api.timeout
 })
 
+instance.defaults.headers.common['Cache-Control'] = `no-cache`
+instance.defaults.withCredentials = true
+
 instance.interceptors.request.use(
   (config) => {
     if (import.meta.env.DEV) {
@@ -41,9 +44,7 @@ instance.interceptors.request.use(
 )
 
 export const handleError: IHandleError = (error: unknown) => {
-  console.log(error)
   if (!(error instanceof AxiosError)) {
-    console.log('err1')
     return {
       message: UNHANDLED_ERROR_MESSAGE,
       lists: UNHANDLED_ERROR_LISTS
@@ -51,7 +52,6 @@ export const handleError: IHandleError = (error: unknown) => {
   }
 
   if (!error.response) {
-    console.log('err2')
     return {
       message: UNHANDLED_ERROR_MESSAGE,
       lists: UNHANDLED_ERROR_LISTS
@@ -59,13 +59,12 @@ export const handleError: IHandleError = (error: unknown) => {
   }
 
   if (error.response?.status === 500 || error.response?.status === 404) {
-    console.log('err3')
     return {
       message: UNHANDLED_ERROR_MESSAGE,
       lists: UNHANDLED_ERROR_LISTS
     }
   }
-  console.log('err4')
+
   const message = error?.response?.data?.message
   const errors = error?.response?.data?.errors
 

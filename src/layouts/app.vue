@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import {
-  AppFooter,
-  AppHeader,
   AppPreloader,
   AppSidebar,
   useMobileBreakpoint,
   useSidebar,
   useSidebarStore
 } from '@point-hub/papp'
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { apps } from '@/composable/apps'
+import { useAppMenu } from '@/composable/apps'
 
 import { version } from '../../package.json'
+import AppFooter from '../components/app-footer.vue'
+import AppHeader from '../components/app-header.vue'
 
 const route = useRoute()
 
@@ -21,11 +21,11 @@ useSidebar()
 
 const mobileBreakpoint = useMobileBreakpoint()
 const sidebarStore = useSidebarStore()
-
+const appMenu = reactive(useAppMenu())
 const choosenAppIndex = ref(0)
-const choosenTitle = ref(apps[choosenAppIndex.value].name)
+const choosenTitle = ref('')
 const onChooseApp = (path: string) => {
-  for (const [index, app] of apps.entries()) {
+  for (const [index, app] of appMenu.menus.entries()) {
     if (app.path === path) {
       choosenTitle.value = app.name
       choosenAppIndex.value = index
@@ -34,7 +34,7 @@ const onChooseApp = (path: string) => {
 }
 
 onMounted(() => {
-  for (const [index, app] of apps.entries()) {
+  for (const [index, app] of appMenu.menus.entries()) {
     if (route.path.includes(app.path)) {
       choosenTitle.value = app.name
       choosenAppIndex.value = index
@@ -44,18 +44,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <component :is="AppPreloader" />
+  <app-preloader />
 
   <div class="app-layout">
     <!-- Header -->
-    <component :is="AppHeader" />
+    <app-header />
 
     <!-- Sidebar -->
-    <component
-      :is="AppSidebar"
+    <app-sidebar
       :title="choosenTitle"
-      :apps="apps"
-      :menus="apps[choosenAppIndex].menu ?? []"
+      :apps="appMenu.menus"
+      :menus="appMenu.menus[choosenAppIndex].menu ?? []"
       :is-sidebar-open="sidebarStore.isSidebarOpen"
       :is-mobile="mobileBreakpoint.isMobile()"
       @choose="onChooseApp"
@@ -69,7 +68,7 @@ onMounted(() => {
       </main>
 
       <!-- Footer -->
-      <component :is="AppFooter" :version="version" />
+      <app-footer :version="version" />
     </div>
   </div>
 </template>

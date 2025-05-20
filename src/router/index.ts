@@ -11,7 +11,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
+      path: '',
       component: () => import('../layouts/app.vue'),
       children: [homeRoutes, userRoutes, myAccountRoutes]
     },

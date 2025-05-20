@@ -101,7 +101,7 @@ const onSubmit = async () => {
           <div>
             <base-button type="submit" is-block :disabled="isLoading" color="primary">
               <template v-if="!isLoading">Sign In</template>
-              <base-loader v-if="isLoading" type="classic" sample="2">Loading...</base-loader>
+              <base-loader v-else type="classic" sample="2">Loading...</base-loader>
             </base-button>
             <base-divider orientation="vertical" text="or continue with" />
             <div class="flex justify-between gap-2">

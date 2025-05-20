@@ -30,7 +30,6 @@ export function useAppMenu() {
 const seedMenu = () => {
   const menu = ref<IMenu[]>([])
 
-  menu.value.push({ name: 'Profile', path: '/profile' })
   menu.value.push({ name: 'My Account', path: '/my-account' })
 
   return menu.value

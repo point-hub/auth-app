@@ -3,42 +3,26 @@ import { computed, ref } from 'vue'
 import { usePasswordValidation } from './validation'
 
 export interface IForm {
-  name: string
-  username: string
-  email: string
   password: string
   confirm_password: string
-  accept_terms: boolean
 }
 
 export interface IFormError {
-  name: string[]
-  username: string[]
-  email: string[]
   password: string[]
   confirm_password: string[]
-  accept_terms: string[]
 }
 
 export function useForm() {
   const passwordValidation = usePasswordValidation()
 
   const defaultData: IForm = {
-    name: '',
-    username: '',
-    email: '',
     password: '',
-    confirm_password: '',
-    accept_terms: false
+    confirm_password: ''
   }
 
   const defaultErrors: IFormError = {
-    name: [],
-    username: [],
-    email: [],
     password: [],
-    confirm_password: [],
-    accept_terms: []
+    confirm_password: []
   }
 
   const data = ref<IForm>({ ...defaultData })

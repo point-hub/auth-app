@@ -74,7 +74,7 @@ const onSignout = async () => {
                 <BaseIcon v-else icon="i-ph-moon-duotone" class="text-2xl" />
                 <p>Dark Mode</p>
               </base-button>
-              <base-divider orientation="vertical" />
+              <base-divider orientation="vertical" class="my-2!" />
               <base-button
                 variant="text"
                 color="danger"

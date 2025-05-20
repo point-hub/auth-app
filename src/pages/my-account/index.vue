@@ -8,6 +8,10 @@ import AppMenu from '@/components/app-menu.vue'
 
 const breadcrumbs = [
   {
+    name: 'Home',
+    path: '/'
+  },
+  {
     name: 'My Account'
   }
 ]
@@ -23,7 +27,7 @@ onMounted(() => {
   })
   menus.value.push({
     name: 'Password',
-    path: '/my-account/update-password',
+    path: '/my-account/password',
     icon: 'i-far-lock'
   })
 })

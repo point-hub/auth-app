@@ -1,8 +1,8 @@
 export default {
-  path: '/',
+  path: '',
   children: [
     {
-      path: '/',
+      path: '',
       component: () => import('@/pages/home/index.vue'),
       meta: { requiresAuth: true }
     }

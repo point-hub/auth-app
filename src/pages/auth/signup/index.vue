@@ -107,7 +107,7 @@ const onSubmit = async () => {
           :type="password.type.value"
           v-model="form.data.value.password"
           :errors="form.errors.value.password"
-          @keyup="form.passwordValidation()"
+          @keyup="form.validatePassword()"
           :reset-errors-on-update="false"
         >
           <template #suffix>
@@ -123,7 +123,7 @@ const onSubmit = async () => {
           :type="password.type.value"
           v-model="form.data.value.confirm_password"
           :errors="form.errors.value.confirm_password"
-          @keyup="form.confirmPasswordValidation()"
+          @keyup="form.validateConfirmationPassword()"
           :reset-errors-on-update="false"
         >
           <template #suffix>

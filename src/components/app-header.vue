@@ -52,7 +52,11 @@ const onSignout = async () => {
           </button>
           <template #content>
             <div class="popper-root p-2">
-              <router-link to="/users/profile" class="w-full" @click="accountPopoverRef.toggle()">
+              <router-link
+                to="/my-account/profile"
+                class="w-full"
+                @click="accountPopoverRef.toggle()"
+              >
                 <base-button
                   variant="text"
                   color="primary"

@@ -1,46 +1,81 @@
 <script setup lang="ts">
 import {
-  AppPreloader,
-  AppSidebar,
+  type IAppMenu,
+  useDarkMode,
   useMobileBreakpoint,
   useSidebar,
+  useSidebarMenuStore,
   useSidebarStore
 } from '@point-hub/papp'
-import { onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-import { useAppMenu } from '@/composable/apps'
+import { useAuthStore } from '@/stores/auth.store'
+import { apiRequest } from '@/utils/api'
 
 import { version } from '../../package.json'
-import AppFooter from '../components/app-footer.vue'
-import AppHeader from '../components/app-header.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 useSidebar()
 
+const authStore = useAuthStore()
 const mobileBreakpoint = useMobileBreakpoint()
 const sidebarStore = useSidebarStore()
-const appMenu = reactive(useAppMenu())
-const choosenAppIndex = ref(0)
-const choosenTitle = ref('')
-const onChooseApp = (path: string) => {
-  for (const [index, app] of appMenu.menus.entries()) {
-    if (app.path === path) {
-      choosenTitle.value = app.name
-      choosenAppIndex.value = index
-    }
+const sidebarMenuStore = useSidebarMenuStore()
+const { isDarkMode, toggleDarkMode } = useDarkMode()
+
+// Sidebar
+const appMenu = ref<IAppMenu[]>([
+  {
+    name: 'Auth',
+    path: '/',
+    icon: 'https://assets.pointhub.net/assets/images/logo/primary/icon-rounded.png'
   }
+])
+const appList = ref<IAppMenu[]>([
+  {
+    name: 'Auth',
+    path: 'https://www.example.com'
+  }
+])
+
+// Header
+const account = ref({
+  organization: 'Organization',
+  username: 'John Doe',
+  avatar: 'https://placehold.co/150'
+})
+
+const organizations = ref([
+  {
+    name: 'Organization ABC',
+    link: '?organization=abc'
+  }
+])
+
+const onSignout = async () => {
+  await apiRequest.post('/v1/auth/signout')
+  router.push('/signin')
 }
 
 onMounted(() => {
-  for (const [index, app] of appMenu.menus.entries()) {
-    if (route.path.includes(app.path)) {
-      choosenTitle.value = app.name
-      choosenAppIndex.value = index
-    }
-  }
+  sidebarMenuStore.onChooseApp(route.path)
 })
+
+watch(
+  () => authStore.permissions,
+  () => {
+    appMenu.value[0].menu = [{ name: 'Home', path: '/' }]
+    appMenu.value[0].menu.push({ name: 'My Account', path: '/my-account' })
+
+    sidebarMenuStore.setAppMenu(appMenu.value, appList.value)
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>
@@ -48,16 +83,45 @@ onMounted(() => {
 
   <div class="app-layout">
     <!-- Header -->
-    <app-header />
+    <app-header>
+      <template #left-header>
+        <header-sidebar-button
+          :on-toggle-sidebar="sidebarStore.toggleSidebar"
+          v-model:is-sidebar-open="sidebarStore.isSidebarOpen"
+        />
+      </template>
+      <template #right-header>
+        <header-notification></header-notification>
+        <base-divider class="h-10" orientation="horizontal" />
+        <header-menu
+          :organization="account.organization"
+          :username="account.username"
+          :avatar="account.avatar"
+        >
+          <header-menu-account
+            :organization="account.organization"
+            :username="account.username"
+            :avatar="account.avatar"
+          />
+          <base-divider orientation="vertical" />
+          <header-menu-switch-organization :organizations="organizations" />
+          <header-menu-dark-mode
+            :on-toggle-dark-mode="toggleDarkMode"
+            v-model:is-dark-mode="isDarkMode"
+          />
+          <header-menu-signout :on-signout="onSignout" />
+        </header-menu>
+      </template>
+    </app-header>
 
     <!-- Sidebar -->
     <app-sidebar
-      :title="choosenTitle"
-      :apps="appMenu.menus"
-      :menus="appMenu.menus[choosenAppIndex].menu ?? []"
+      :title="sidebarMenuStore.choosenAppTitle"
+      :apps="sidebarMenuStore.appMenu"
+      :menus="sidebarMenuStore.appMenu[sidebarMenuStore.choosenAppIndex].menu ?? []"
       :is-sidebar-open="sidebarStore.isSidebarOpen"
       :is-mobile="mobileBreakpoint.isMobile()"
-      @choose="onChooseApp"
+      @choose="sidebarMenuStore.onChooseApp"
     />
 
     <!-- Main Container -->
@@ -68,7 +132,7 @@ onMounted(() => {
       </main>
 
       <!-- Footer -->
-      <app-footer :version="version" />
+      <app-footer :version="version" :year="2025" />
     </div>
   </div>
 </template>

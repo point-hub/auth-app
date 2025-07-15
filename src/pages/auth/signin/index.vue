@@ -27,8 +27,8 @@ const onSubmit = async () => {
   try {
     isLoading.value = true
     const response = await signinApiRequest(form.data.value)
-    if (response.status === 200) {
-      authStore.update(response.data)
+    if (response) {
+      authStore.update(response)
       router.push('/')
     }
   } catch (error) {
@@ -104,7 +104,12 @@ const onSubmit = async () => {
             </base-button>
             <base-divider orientation="vertical" text="or continue with" />
             <div class="flex justify-between gap-2">
-              <base-button type="button" variant="outline" class="shadow w-full">
+              <base-button
+                type="button"
+                variant="outline"
+                class="shadow w-full"
+                :is-loading="isLoading"
+              >
                 <img
                   src="@/assets/images/continue-with/google.svg"
                   alt="Continue with Google"
@@ -112,7 +117,12 @@ const onSubmit = async () => {
                 />
                 Sign in with Google
               </base-button>
-              <base-button type="button" variant="outline" class="shadow w-full">
+              <base-button
+                type="button"
+                variant="outline"
+                class="shadow w-full"
+                :is-loading="isLoading"
+              >
                 <img
                   src="@/assets/images/continue-with/github.svg"
                   alt="Continue with Github"

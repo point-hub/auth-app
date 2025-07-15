@@ -94,10 +94,7 @@ const onUpdate = async () => {
       </base-input>
 
       <div class="flex gap-2 mt-10">
-        <base-button :disabled="isSaving" size="xs" color="primary" @click="onUpdate">
-          <template v-if="!isSaving">Update Password</template>
-          <base-loader v-else type="classic" sample="2">Loading...</base-loader>
-        </base-button>
+        <base-button :is-loading="isSaving" color="primary" @click="onUpdate">Update Password</base-button>
       </div>
     </div>
   </base-card>

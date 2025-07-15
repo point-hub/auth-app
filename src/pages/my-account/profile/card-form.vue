@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, type Ref } from 'vue'
+import { inject, onMounted, type Ref,ref } from 'vue'
 
 import type { IToastRef } from '@/main-app.vue'
 import { useAuthStore } from '@/stores/auth.store'
@@ -13,6 +13,7 @@ const authStore = useAuthStore()
 
 const toastRef = inject<Ref<IToastRef>>('toastRef')
 const form = useForm()
+const isSaving = ref(false)
 
 onMounted(async () => {
   const response = await retrieveUserApi(authStore._id)
@@ -26,6 +27,7 @@ onMounted(async () => {
 
 const onUpdate = async () => {
   try {
+    isSaving.value = true
     const response = await updateUserApi(form.data.value._id, form.data.value)
     if (response?.modified_count === 1) {
       toastRef?.value.toast('Update success', { color: 'success' })
@@ -42,6 +44,8 @@ const onUpdate = async () => {
         color: 'danger'
       })
     }
+  } finally {
+    isSaving.value = false
   }
 }
 </script>
@@ -54,19 +58,21 @@ const onUpdate = async () => {
       <base-input
         layout="horizontal"
         label="Username"
+        required
         v-model="form.data.value.username"
         :errors="form.errors.value.username"
-        required
+        :is-loading="isSaving"
       />
       <base-input
         layout="horizontal"
         label="Name"
+        required
         v-model="form.data.value.name"
         :errors="form.errors.value.name"
-        required
+        :is-loading="isSaving"
       />
-      <div class="flex gap-2 mt-5">
-        <base-button size="xs" color="primary" @click="onUpdate">Update</base-button>
+      <div class="flex gap-2 mt-10">
+        <base-button color="primary" @click="onUpdate" :is-loading="isSaving">Update</base-button>
       </div>
     </div>
   </base-card>

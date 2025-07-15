@@ -63,9 +63,9 @@ const onUpdate = async () => {
       </template>
     </base-input>
 
-    <div class="flex gap-2 mt-5">
-      <base-button size="xs" color="primary" @click="onUpdate">Update</base-button>
-      <base-button size="xs" variant="filled" color="primary">
+    <div class="flex gap-2 mt-10">
+      <base-button color="primary" @click="onUpdate">Update</base-button>
+      <base-button variant="filled" color="primary">
         <base-icon icon="i-far-envelope" />
         Send Email Verification
       </base-button>

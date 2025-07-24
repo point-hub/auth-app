@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { inject, type Ref, ref } from 'vue'
+import { ref } from 'vue'
 
-import type { IToastRef } from '@/main-app.vue'
+import { toast } from '@/toast'
 import { handleError } from '@/utils/api'
 
 import { isEmailExistsApiRequest } from './api/is-email-exists.api'
@@ -15,8 +15,6 @@ const password = usePassword()
 const isSignupSuccess = ref(false)
 const signupEmail = ref()
 
-const toastRef = inject<Ref<IToastRef>>('toastRef')
-
 const onEmailChange = async () => {
   try {
     const response = await isEmailExistsApiRequest(form.data.value.email)
@@ -29,7 +27,7 @@ const onEmailChange = async () => {
       form.errors.value.email = errorResponse.errors.email || []
     }
     if (errorResponse.message) {
-      toastRef?.value.toast(errorResponse.message, {
+      toast(errorResponse.message, {
         lists: errorResponse.lists,
         color: 'danger',
         timer: 5000
@@ -40,13 +38,13 @@ const onEmailChange = async () => {
 
 const onSubmit = async () => {
   if ((form.errors.value.password?.length ?? 0) > 0) {
-    return toastRef?.value.toast('Please use strong password', { color: 'danger' })
+    return toast('Please use strong password', { color: 'danger' })
   }
   if (!form.isPasswordConfirmed) {
-    return toastRef?.value.toast('Password confirmation not match', { color: 'danger' })
+    return toast('Password confirmation not match', { color: 'danger' })
   }
   if (!form.data.value.accept_terms) {
-    return toastRef?.value.toast('Please accept terms & privacy', { color: 'danger' })
+    return toast('Please accept terms & privacy', { color: 'danger' })
   }
 
   try {
@@ -67,7 +65,7 @@ const onSubmit = async () => {
       form.errors.value.accept_terms = errorResponse.errors.accept_terms || []
     }
     if (errorResponse.message) {
-      toastRef?.value.toast(errorResponse.message, {
+      toast(errorResponse.message, {
         lists: errorResponse.lists,
         color: 'danger'
       })
@@ -80,52 +78,23 @@ const onSubmit = async () => {
   <base-card class="max-w-xl" v-if="isSignupSuccess === false">
     <form @submit.prevent="onSubmit" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
-        <base-input
-          label="Name"
-          layout="vertical"
-          v-model="form.data.value.name"
-          :errors="form.errors.value.name"
-        />
-        <base-input
-          label="Username"
-          layout="vertical"
-          v-model="form.data.value.username"
-          :errors="form.errors.value.username"
-        />
-        <base-input
-          required
-          label="Email"
-          layout="vertical"
-          v-model="form.data.value.email"
-          :errors="form.errors.value.email"
-          @change="onEmailChange"
-        />
-        <base-input
-          required
-          label="Password"
-          layout="vertical"
-          :type="password.type.value"
-          v-model="form.data.value.password"
-          :errors="form.errors.value.password"
-          @keyup="form.validatePassword()"
-          :reset-errors-on-update="false"
-        >
+        <base-input label="Name" layout="vertical" v-model="form.data.value.name" :errors="form.errors.value.name" />
+        <base-input label="Username" layout="vertical" v-model="form.data.value.username"
+          :errors="form.errors.value.username" />
+        <base-input required label="Email" layout="vertical" v-model="form.data.value.email"
+          :errors="form.errors.value.email" @change="onEmailChange" />
+        <base-input required label="Password" layout="vertical" :type="password.type.value"
+          v-model="form.data.value.password" :errors="form.errors.value.password" @keyup="form.validatePassword()"
+          :reset-errors-on-update="false">
           <template #suffix>
             <BaseButton @click="password.toggle" variant="text">
               <BaseIcon icon="i-far-eye" />
             </BaseButton>
           </template>
         </base-input>
-        <base-input
-          required
-          label="Confirm Password"
-          layout="vertical"
-          :type="password.type.value"
-          v-model="form.data.value.confirm_password"
-          :errors="form.errors.value.confirm_password"
-          @keyup="form.validateConfirmationPassword()"
-          :reset-errors-on-update="false"
-        >
+        <base-input required label="Confirm Password" layout="vertical" :type="password.type.value"
+          v-model="form.data.value.confirm_password" :errors="form.errors.value.confirm_password"
+          @keyup="form.validateConfirmationPassword()" :reset-errors-on-update="false">
           <template #suffix>
             <base-button @click="password.toggle" variant="text">
               <base-icon icon="i-far-eye" />

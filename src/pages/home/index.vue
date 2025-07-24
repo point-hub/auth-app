@@ -6,8 +6,6 @@ import AppMenu from '@/components/app-menu.vue'
 
 // const authStore = useAuthStore()
 
-const breadcrumbs = []
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const menus = ref<any[]>([])
 
@@ -21,5 +19,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <app-menu :breadcrumbs="breadcrumbs" v-model:menus="menus" />
+  <app-menu v-model:menus="menus" />
 </template>

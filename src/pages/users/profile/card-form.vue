@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { inject, onMounted, reactive, type Ref } from 'vue'
+import { onMounted, reactive } from 'vue'
 
-import type { IToastRef } from '@/main-app.vue'
 import { useAuthStore } from '@/stores/auth.store'
+import { toast } from '@/toast'
 import { handleError } from '@/utils/api'
 
 import { useForm } from './form'
@@ -15,7 +15,6 @@ const getUserApi = useGetUserApi()
 const authStore = useAuthStore()
 
 const updateUserApi = useUpdateUserApi()
-const toastRef = inject<Ref<IToastRef>>('toastRef')
 const form = reactive(useForm())
 
 onMounted(async () => {
@@ -34,7 +33,7 @@ const onUpdate = async () => {
   try {
     const response = await updateUserApi.send(formId.value ?? '', form.data, form.errors)
     if (response?.modified_count === 1) {
-      toastRef?.value.toast('Update success', { color: 'success' })
+      toast('Update success', { color: 'success' })
     }
   } catch (error) {
     const errorResponse = handleError(error)
@@ -42,7 +41,7 @@ const onUpdate = async () => {
       form.errors.name = errorResponse.errors.name || []
     }
     if (errorResponse.message) {
-      toastRef?.value.toast(errorResponse.message, {
+      toast(errorResponse.message, {
         lists: errorResponse.lists,
         color: 'danger'
       })
@@ -56,29 +55,11 @@ const onUpdate = async () => {
     <template #header>Profile</template>
 
     <div class="flex flex-col gap-4 mt-5">
-      <base-input
-        required
-        disabled
-        layout="horizontal"
-        v-model="form.data.username"
-        label="Username"
-        :errors="form.errors?.username"
-      />
-      <base-input
-        required
-        layout="horizontal"
-        disabled
-        v-model="form.data.email"
-        label="Email"
-        :errors="form.errors?.email"
-      />
-      <base-input
-        required
-        layout="horizontal"
-        v-model="form.data.name"
-        label="Name"
-        :errors="form.errors?.name"
-      />
+      <base-input required disabled layout="horizontal" v-model="form.data.username" label="Username"
+        :errors="form.errors?.username" />
+      <base-input required layout="horizontal" disabled v-model="form.data.email" label="Email"
+        :errors="form.errors?.email" />
+      <base-input required layout="horizontal" v-model="form.data.name" label="Name" :errors="form.errors?.name" />
       <div class="flex gap-2">
         <base-button size="xs" color="primary" @click="onUpdate">Update</base-button>
       </div>

@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import authRoutes from '@/pages/auth/routes'
-import homeRoutes from '@/pages/home/routes'
-import myAccountRoutes from '@/pages/my-account/routes'
-import userRoutes from '@/pages/users/routes'
+import routesAuth from '@/pages/auth/routes'
+import routesClient from '@/pages/clients/routes'
+import routesHome from '@/pages/home/routes'
+import routesMyAccount from '@/pages/my-account/routes'
+import routesUser from '@/pages/users/routes'
 import { useAuthStore } from '@/stores/auth.store'
 import { apiRequest } from '@/utils/api'
 
@@ -13,12 +14,12 @@ const router = createRouter({
     {
       path: '',
       component: () => import('../layouts/app.vue'),
-      children: [homeRoutes, userRoutes, myAccountRoutes]
+      children: [routesHome, routesUser, routesMyAccount, routesClient]
     },
     {
       path: '/auth',
       component: () => import('../layouts/auth.vue'),
-      children: [authRoutes]
+      children: [routesAuth]
     },
     {
       path: '/unauthorized',
@@ -42,7 +43,8 @@ const isAuthenticated = async () => {
         _id: response.data._id,
         name: response.data.name,
         username: response.data.username,
-        email: response.data.email
+        email: response.data.email,
+        role: response.data.role
       })
       return true
     }

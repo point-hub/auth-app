@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { inject, onMounted, type Ref,ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-import type { IToastRef } from '@/main-app.vue'
 import { useAuthStore } from '@/stores/auth.store'
+import { toast } from '@/toast'
 import { handleError } from '@/utils/api'
 
 import { useForm } from './form'
@@ -11,7 +11,6 @@ import { updateUserApi } from './update.api'
 
 const authStore = useAuthStore()
 
-const toastRef = inject<Ref<IToastRef>>('toastRef')
 const form = useForm()
 const isSaving = ref(false)
 
@@ -30,7 +29,7 @@ const onUpdate = async () => {
     isSaving.value = true
     const response = await updateUserApi(form.data.value._id, form.data.value)
     if (response?.modified_count === 1) {
-      toastRef?.value.toast('Update success', { color: 'success' })
+      toast('Update success', { color: 'success' })
     }
   } catch (error) {
     const errorResponse = handleError(error)
@@ -39,7 +38,7 @@ const onUpdate = async () => {
       form.errors.value.name = errorResponse.errors.name || []
     }
     if (errorResponse.message) {
-      toastRef?.value.toast(errorResponse.message, {
+      toast(errorResponse.message, {
         lists: errorResponse.lists,
         color: 'danger'
       })
@@ -55,22 +54,10 @@ const onUpdate = async () => {
     <template #header>Profile</template>
 
     <div class="flex flex-col gap-4 mt-5">
-      <base-input
-        layout="horizontal"
-        label="Username"
-        required
-        v-model="form.data.value.username"
-        :errors="form.errors.value.username"
-        :is-loading="isSaving"
-      />
-      <base-input
-        layout="horizontal"
-        label="Name"
-        required
-        v-model="form.data.value.name"
-        :errors="form.errors.value.name"
-        :is-loading="isSaving"
-      />
+      <base-input layout="horizontal" label="Username" required v-model="form.data.value.username"
+        :errors="form.errors.value.username" :is-loading="isSaving" />
+      <base-input layout="horizontal" label="Name" required v-model="form.data.value.name"
+        :errors="form.errors.value.name" :is-loading="isSaving" />
       <div class="flex gap-2 mt-10">
         <base-button color="primary" @click="onUpdate" :is-loading="isSaving">Update</base-button>
       </div>

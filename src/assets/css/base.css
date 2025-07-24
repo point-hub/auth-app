@@ -28,3 +28,7 @@ h3 {
 .scrollbar-hidden::-webkit-scrollbar {
   @apply hidden;
 }
+
+.content-container {
+  @apply flex flex-col gap-4;
+}

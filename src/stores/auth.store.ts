@@ -7,6 +7,7 @@ export interface IAuth {
   username?: string
   email?: string
   permissions?: string[]
+  role?: string
 }
 
 export const useAuthStore = defineStore('auth-store', () => {
@@ -15,6 +16,7 @@ export const useAuthStore = defineStore('auth-store', () => {
   const username = ref()
   const email = ref()
   const permissions = ref()
+  const role = ref()
 
   const update = (auth: IAuth) => {
     if (auth._id) _id.value = auth._id
@@ -22,6 +24,7 @@ export const useAuthStore = defineStore('auth-store', () => {
     if (auth.username) username.value = auth.username
     if (auth.email) email.value = auth.email
     if (auth.permissions) permissions.value = auth.permissions
+    if (auth.role) role.value = auth.role
   }
 
   return {
@@ -30,6 +33,7 @@ export const useAuthStore = defineStore('auth-store', () => {
     username,
     email,
     permissions,
+    role,
     update
   }
 })

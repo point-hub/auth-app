@@ -9,7 +9,8 @@ export function useGetUserApi() {
         _id: response.data._id,
         username: response.data.username,
         email: response.data.email,
-        name: response.data.name
+        name: response.data.name,
+        role: response.data.role
       }
     } catch (error) {
       console.log(error)

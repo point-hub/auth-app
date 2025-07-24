@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { inject, type Ref, ref } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import type { IToastRef } from '@/main-app.vue'
+import { toast } from '@/toast'
 import { handleError } from '@/utils/api'
 
 import { verifyEmailApiRequest } from './api/verify-email.api'
 import VerifySuccess from './components/verify-success.vue'
 import { useForm } from './form'
 
-const toastRef = inject<Ref<IToastRef>>('toastRef')
 const route = useRoute()
 
 const form = useForm()
@@ -33,7 +32,7 @@ const onSubmit = async () => {
       form.errors.value.code = errorResponse.errors.code || []
     }
     if (errorResponse.message) {
-      toastRef?.value.toast(errorResponse.message, {
+      toast(errorResponse.message, {
         lists: errorResponse.lists,
         color: 'danger'
       })
@@ -46,13 +45,8 @@ const onSubmit = async () => {
   <base-card class="max-w-xl" v-if="!isVerifySuccess">
     <form @submit.prevent="onSubmit" class="flex flex-col gap-8">
       <div class="flex flex-col gap-4">
-        <base-input
-          v-model="form.data.value.code"
-          :errors="form.errors.value.code"
-          label="Code"
-          layout="vertical"
-          autofocus
-        />
+        <base-input v-model="form.data.value.code" :errors="form.errors.value.code" label="Code" layout="vertical"
+          autofocus />
       </div>
       <base-button type="submit" color="primary">Verify Email</base-button>
     </form>

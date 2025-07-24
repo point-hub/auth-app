@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { inject, onMounted, reactive, type Ref, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import type { IToastRef } from '@/main-app.vue'
 import { useAuthStore } from '@/stores/auth.store'
+import { toast } from '@/toast'
 import { handleError } from '@/utils/api'
 
 import { signinApiRequest } from './api/signin.api'
@@ -15,7 +15,6 @@ const password = reactive(usePassword())
 const router = useRouter()
 const route = useRoute()
 const redirectUrl = ref()
-const toastRef = inject<Ref<IToastRef>>('toastRef')
 const authStore = useAuthStore()
 
 onMounted(() => {
@@ -39,7 +38,7 @@ const onSubmit = async () => {
       return
     }
     if (errorResponse.message) {
-      toastRef?.value.toast(errorResponse.message, {
+      toast(errorResponse.message, {
         lists: errorResponse.lists,
         color: 'danger',
         timer: 5000
@@ -66,24 +65,10 @@ const onSubmit = async () => {
         </div>
 
         <div class="flex flex-col gap-4">
-          <base-input
-            required
-            autofocus
-            :disabled="isLoading"
-            v-model="form.data.value.username"
-            :errors="form.errors.value.username"
-            label="Username / Email"
-            layout="vertical"
-          />
-          <base-input
-            required
-            :disabled="isLoading"
-            :type="password.type"
-            v-model="form.data.value.password"
-            :errors="form.errors.value.password"
-            label="Password"
-            layout="vertical"
-          >
+          <base-input required autofocus :disabled="isLoading" v-model="form.data.value.username"
+            :errors="form.errors.value.username" label="Username / Email" layout="vertical" />
+          <base-input required :disabled="isLoading" :type="password.type" v-model="form.data.value.password"
+            :errors="form.errors.value.password" label="Password" layout="vertical">
             <template #suffix>
               <BaseButton @click="password.toggle" variant="text" color="secondary">
                 <BaseIcon icon="i-far-eye" />
@@ -91,11 +76,7 @@ const onSubmit = async () => {
             </template>
           </base-input>
           <div class="flex justify-between">
-            <base-checkbox
-              v-model="form.data.value.remember_me"
-              text="Remember Me"
-              :disabled="isLoading"
-            />
+            <base-checkbox v-model="form.data.value.remember_me" text="Remember Me" :disabled="isLoading" />
             <router-link to="/forgot-password">Forgot Password</router-link>
           </div>
           <div>
@@ -104,30 +85,12 @@ const onSubmit = async () => {
             </base-button>
             <base-divider orientation="vertical" text="or continue with" />
             <div class="flex justify-between gap-2">
-              <base-button
-                type="button"
-                variant="outline"
-                class="shadow w-full"
-                :is-loading="isLoading"
-              >
-                <img
-                  src="@/assets/images/continue-with/google.svg"
-                  alt="Continue with Google"
-                  class="h-6"
-                />
+              <base-button type="button" variant="outline" class="shadow w-full" :is-loading="isLoading">
+                <img src="@/assets/images/continue-with/google.svg" alt="Continue with Google" class="h-6" />
                 Sign in with Google
               </base-button>
-              <base-button
-                type="button"
-                variant="outline"
-                class="shadow w-full"
-                :is-loading="isLoading"
-              >
-                <img
-                  src="@/assets/images/continue-with/github.svg"
-                  alt="Continue with Github"
-                  class="h-6"
-                />
+              <base-button type="button" variant="outline" class="shadow w-full" :is-loading="isLoading">
+                <img src="@/assets/images/continue-with/github.svg" alt="Continue with Github" class="h-6" />
                 Sign in with Github
               </base-button>
             </div>
